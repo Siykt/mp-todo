@@ -14,7 +14,9 @@ export default defineEventHandler(event => {
   const sha1 = createHash('sha1');
   sha1.update(sortedArr.join(''));
   const signature = sha1.digest('hex');
+  console.log('signature', signature, query.signature);
   if (signature !== query.signature) {
+    console.log('Invalid signature', MP_TOKEN, query.timestamp, query.nonce);
     return 'Invalid signature';
   }
   return query.echostr;
