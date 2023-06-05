@@ -6,7 +6,6 @@ const { init, sides, activeSide, upsetSide } = useSidesStore();
 const adding = ref(false);
 const sidesRef = ref<HTMLInputElement>();
 const addInputRef = ref<HTMLInputElement>();
-const reversedSides = computed(() => sides.value.slice().reverse());
 const showAddInput = () => {
   adding.value = true;
   nextTick(() => {
@@ -34,8 +33,19 @@ onMounted(() => {
 </script>
 <template>
   <div class="w-230px flex flex-col h-full bg-#f3f4f6 rounded-md py2 items-start min-h-0">
-    <div ref="sidesRef" class="flex-1 flex flex-col-reverse p2 relative w-full overflow-hidden overflow-y-auto">
+    <div ref="sidesRef" class="flex-1 flex flex-col p2 relative w-full overflow-hidden overflow-y-auto sides">
       <TransitionGroup name="list">
+        <div
+          v-for="side in sides"
+          :key="side.id"
+          class="side-item"
+          :class="{ active: activeSide.id === side.id }"
+          @click="activeSide = side"
+        >
+          <i class="mdi:bookshelf"></i>
+          <span class="ml-4px">{{ side.title }}</span>
+          <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
+        </div>
         <div v-if="adding" class="relative" key="addInput">
           <i class="mdi:plus absolute top-50% translate-y--50% text-#6c6cc9 left-2"></i>
           <input
@@ -47,17 +57,6 @@ onMounted(() => {
             @keyup.enter="addSide"
             placeholder="添加一个分组"
           />
-        </div>
-        <div
-          v-for="side in reversedSides"
-          :key="side.id"
-          class="side-item"
-          :class="{ active: activeSide.id === side.id }"
-          @click="activeSide = side"
-        >
-          <i class="mdi:bookshelf"></i>
-          <span class="ml-4px">{{ side.title }}</span>
-          <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
         </div>
       </TransitionGroup>
     </div>
