@@ -58,7 +58,7 @@ export const useTodosStore = () => {
       todos.value = todos.value.map(t => (t.id === todo.id ? curTodo : t));
     } else {
       // create
-      todos.value.push(curTodo);
+      todos.value.unshift(curTodo);
       sides.value = sides.value.map(side => {
         if (side.id === activeSide.value.id) side.total++;
         return side;
