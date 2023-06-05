@@ -4,7 +4,7 @@ import { useSidesStore } from '~/lib/hooks/useTodoStore';
 const { init, sides, activeSide, upsetSide } = useSidesStore();
 
 const adding = ref(false);
-const sidesRef = ref<HTMLInputElement>();
+const sidesRef = ref<HTMLDivElement>();
 const addInputRef = ref<HTMLInputElement>();
 const showAddInput = () => {
   adding.value = true;
