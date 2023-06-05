@@ -1,37 +1,71 @@
 <script setup lang="ts">
-import storage from '~/lib/storage';
-import { TodoGroup } from '~/modules/Todo/Core';
+import { useSidesStore } from '~/lib/hooks/useTodoStore';
 
-const sides = ref<TodoGroup[]>([]);
-const activeSide = ref<TodoGroup['id']>('');
+const { init, sides, activeSide, upsetSide } = useSidesStore();
 
-const init = async () => {
-  if (typeof window !== 'undefined') {
-    sides.value = await storage.get<TodoGroup[]>('sides', [
-      {
-        id: 'default',
-        title: '默认分组',
-        todoCount: 0,
-      },
-    ]);
-    activeSide.value = sides.value[0].id;
+const adding = ref(false);
+const sidesRef = ref<HTMLInputElement>();
+const addInputRef = ref<HTMLInputElement>();
+const reversedSides = computed(() => sides.value.slice().reverse());
+const showAddInput = () => {
+  adding.value = true;
+  nextTick(() => {
+    sidesRef.value?.scroll({ top: sidesRef.value?.scrollHeight, behavior: 'smooth' });
+    setTimeout(() => addInputRef.value?.focus(), 300);
+  });
+};
+
+const sideTitle = ref('');
+const addSide = async () => {
+  if (sideTitle.value) {
+    activeSide.value = await upsetSide({ title: sideTitle.value });
+    sideTitle.value = '';
   }
+  adding.value = false;
+  nextTick(() => {
+    sidesRef.value?.scroll({ top: sidesRef.value?.scrollHeight, behavior: 'smooth' });
+  });
 };
 
 init();
+onMounted(() => {
+  sidesRef.value?.scroll({ top: 0, behavior: 'smooth' });
+});
 </script>
 <template>
-  <div class="w-230px flex flex-col h-full p2 bg-#f3f4f6 rounded-md">
-    <div class="flex-1">
-      <div v-for="side in sides" :key="side.id" class="side-item" :class="{ active: activeSide === side.id }">
-        <i class="mdi:bookshelf"></i>
-        <span class="ml-4px">{{ side.title }}</span>
-        <span v-if="side.todoCount" class="ml-auto">{{ side.todoCount }}</span>
-      </div>
+  <div class="w-230px flex flex-col h-full bg-#f3f4f6 rounded-md py2 items-start min-h-0">
+    <div ref="sidesRef" class="flex-1 flex flex-col-reverse p2 relative w-full overflow-hidden overflow-y-auto">
+      <TransitionGroup name="list">
+        <div v-if="adding" class="relative" key="addInput">
+          <i class="mdi:plus absolute top-50% translate-y--50% text-#6c6cc9 left-2"></i>
+          <input
+            ref="addInputRef"
+            autofocus
+            class="add-input"
+            v-model="sideTitle"
+            @blur="addSide"
+            @keyup.enter="addSide"
+            placeholder="添加一个分组"
+          />
+        </div>
+        <div
+          v-for="side in reversedSides"
+          :key="side.id"
+          class="side-item"
+          :class="{ active: activeSide.id === side.id }"
+          @click="activeSide = side"
+        >
+          <i class="mdi:bookshelf"></i>
+          <span class="ml-4px">{{ side.title }}</span>
+          <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
+        </div>
+      </TransitionGroup>
     </div>
-    <div class="w-full h-1px bg-#ddd"></div>
-    <div class="flex flex-col p2">
-      <button class="btn">
+    <div class="w-full h-1px my2 px-2">
+      <div class="w-full h-full bg-#ddd"></div>
+    </div>
+    <div class="flex flex-col py2 px4">
+      <button class="btn" @click="showAddInput">
         <i class="mdi:plus"></i>
         添加分组
       </button>
@@ -46,6 +80,7 @@ init();
 <style lang="less" scoped>
 .side-item {
   display: flex;
+  width: 100%;
   align-items: center;
   background: transparent;
   padding: 8px;
@@ -54,10 +89,29 @@ init();
   transition: all 0.3s;
   cursor: pointer;
   border-radius: 4px;
+  line-height: 22px;
+  margin-bottom: 4px;
+  user-select: none;
   &.active,
   &:hover {
     color: #6c6cc9;
     background: #e7eaed;
+  }
+}
+.add-input {
+  width: 100%;
+  padding: 7px;
+  padding-left: 28px;
+  border: 1px solid #6c6cc9;
+  border-radius: 4px;
+  font-size: 15px;
+  transition: all 0.3s;
+  line-height: 22px;
+  background-color: #fff;
+  &:focus {
+    outline: none;
+    border-color: #6c6cc9;
+    box-shadow: 0 0 0 1px #6c6cc960;
   }
 }
 .btn {
@@ -75,5 +129,23 @@ init();
   &:hover {
     color: #6c6cc9;
   }
+}
+
+.list-move, /* 对移动中的元素应用的过渡 */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list-leave-active {
+  position: absolute;
 }
 </style>

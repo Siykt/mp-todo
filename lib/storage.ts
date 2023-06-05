@@ -15,7 +15,7 @@ class Storage {
   }
 
   async set(key: string, value: any) {
-    return await this.store.setItem(key, value);
+    return await this.store.setItem(key, JSON.parse(JSON.stringify(value)));
   }
 
   async remove(key: string) {

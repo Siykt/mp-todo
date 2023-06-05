@@ -20,5 +20,5 @@ export interface TodoInfo {
 export interface TodoGroup {
   id: string;
   title: string;
-  todoCount: number;
+  total: number;
 }
