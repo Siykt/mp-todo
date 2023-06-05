@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: '6',
+      title: 'AntPro Todo',
       meta: [{ charset: 'utf-8' }, { name: 'viewport', content: 'width=device-width,initial-scale=1' }],
       htmlAttrs: {
         lang: 'zh-CN',

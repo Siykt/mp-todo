@@ -1,10 +1,10 @@
-import { createInstance } from 'localforage';
+import localforage from 'localforage';
 
 class Storage {
   private store: LocalForage;
 
   constructor() {
-    this.store = createInstance({
+    this.store = localforage.createInstance({
       name: 'MP_TODO',
       storeName: 'todos',
     });
