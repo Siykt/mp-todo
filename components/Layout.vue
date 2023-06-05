@@ -22,12 +22,4 @@
   background-image: url(/assets/bg.png);
   filter: blur(20px);
 }
-
-* ::-webkit-scrollbar {
-  width: 1px;
-  height: 1px;
-}
-* ::-webkit-scrollbar-thumb {
-  background-color: #6c6cc99a;
-}
 </style>

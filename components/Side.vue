@@ -130,22 +130,4 @@ onMounted(() => {
     color: #6c6cc9;
   }
 }
-
-.list-move, /* 对移动中的元素应用的过渡 */
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-/* 确保将离开的元素从布局流中删除
-  以便能够正确地计算移动的动画。 */
-.list-leave-active {
-  position: absolute;
-}
 </style>

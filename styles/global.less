@@ -1,0 +1,23 @@
+// 全局Transition样式
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.list-leave-active {
+  position: absolute;
+}
+
+// Scrollbar样式
+* ::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+}
+* ::-webkit-scrollbar-thumb {
+  background-color: #6c6cc99a;
+}
