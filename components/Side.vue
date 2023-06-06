@@ -9,8 +9,13 @@ const addInputRef = ref<HTMLInputElement>();
 const showAddInput = () => {
   adding.value = true;
   nextTick(() => {
-    sidesRef.value?.scroll({ top: sidesRef.value?.scrollHeight, behavior: 'smooth' });
-    setTimeout(() => addInputRef.value?.focus(), 300);
+    if (!sidesRef.value) return;
+    sidesRef.value.scroll({ top: sidesRef.value.scrollHeight, behavior: 'smooth' });
+    // focus会导致滚动状态停止, 所以需要动态的调整focus的时机
+    // https://stackoverflow.com/questions/64611389/scroll-duration-for-behaviour-smooth-in-different-browsers
+    setTimeout(() => {
+      addInputRef.value?.focus();
+    }, (sidesRef.value.scrollHeight - sidesRef.value.scrollTop) / 3 + 100);
   });
 };
 
@@ -105,6 +110,7 @@ onMounted(() => {
   border-radius: 4px;
   font-size: 15px;
   transition: all 0.3s;
+  margin-bottom: 4px;
   line-height: 22px;
   background-color: #fff;
   &:focus {
