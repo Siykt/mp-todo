@@ -11,23 +11,23 @@ const DEFAULT_TODO = { title: '', completed: false, scheduled: { enabled: false 
 const CRON_OPTIONS = [
   {
     label: '每天',
-    value: '0 0 8 * * *',
+    value: '0 0 9 * * *',
   },
   {
     label: '每周',
-    value: '0 0 8 * * 1',
+    value: '0 0 9 * * 1',
   },
   {
     label: '每月',
-    value: '0 0 8 1 * *',
+    value: '0 0 9 1 * *',
   },
   {
     label: '每年',
-    value: '0 0 8 1 1 *',
+    value: '0 0 9 1 1 *',
   },
 ];
 
-const adding = ref(false);
+const adding = ref(true);
 const newTodo = ref<Omit<TodoInfo, 'id' | 'group'>>(cloneDeep(DEFAULT_TODO));
 const addTodo = () => {
   if (newTodo.value.title) {
@@ -165,6 +165,7 @@ onMounted(() => {
 .todo-item-content {
   width: 100%;
   display: flex;
+  flex: 0 0 42px;
   align-items: center;
   padding: 12px 16px;
   background: #fff;
@@ -173,7 +174,9 @@ onMounted(() => {
   gap: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   .todo-input {
+    margin-left: -1px;
     border: 0;
+    font-size: 14px;
     transition: all 0.3s;
     background: transparent;
     &:focus {
