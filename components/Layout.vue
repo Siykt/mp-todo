@@ -14,10 +14,6 @@
 </template>
 
 <style lang="less" scoped>
-// @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
-.content {
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
-}
 .bg {
   background-image: url(/assets/bg.png);
   filter: blur(20px);

@@ -94,13 +94,13 @@ onMounted(() => {
   width: 100%;
   align-items: center;
   background: transparent;
-  padding: 8px;
+  flex: 0 0 40px;
+  padding: 0 8px;
   color: #666;
   font-size: 15px;
   transition: all 0.3s;
   cursor: pointer;
   border-radius: 4px;
-  line-height: 22px;
   margin-bottom: 4px;
   user-select: none;
   &.active,
