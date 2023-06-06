@@ -31,6 +31,8 @@ const addSide = async () => {
   });
 };
 
+const isShowSettings = useState('isShowSettings', () => false);
+
 init();
 onMounted(() => {
   sidesRef.value?.scroll({ top: 0, behavior: 'smooth' });
@@ -38,7 +40,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="w-230px flex flex-col h-full bg-#f3f4f6 rounded-md py2 items-start min-h-0">
-    <div ref="sidesRef" class="flex-1 flex flex-col p2 relative w-full overflow-hidden overflow-y-auto sides">
+    <div ref="sidesRef" class="flex-1 flex flex-col px2 relative w-full overflow-hidden overflow-y-auto">
       <TransitionGroup name="list">
         <div
           v-for="side in sides"
@@ -69,13 +71,17 @@ onMounted(() => {
       <div class="w-full h-full bg-#ddd"></div>
     </div>
     <div class="flex flex-col py2 px4 w-full">
-      <button class="btn" @click="showAddInput">
+      <button key="plus" class="btn" @click="showAddInput">
         <i class="mdi:plus"></i>
         添加分组
       </button>
-      <button class="btn">
+      <button v-if="!isShowSettings" key="settings" class="btn" @click="isShowSettings = true">
         <i class="mdi:cog-outline"></i>
         设置
+      </button>
+      <button v-else key="todo" class="btn" @click="isShowSettings = false">
+        <i class="mdi:format-list-group-plus"></i>
+        TODO
       </button>
     </div>
   </div>
@@ -123,7 +129,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   border: 0;
-  padding: 12px;
+  height: 40px;
   padding-left: 0;
   background: transparent;
   gap: 4px;
