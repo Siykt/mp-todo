@@ -107,7 +107,7 @@ onMounted(() => {
         <div
           class="todo-item"
           v-for="todo in todos"
-          :class="{ completed: todo.completed, 'mb-202px': todo.collapsed, active: todo.collapsed }"
+          :class="{ completed: todo.completed, 'mb-192px': todo.collapsed, active: todo.collapsed }"
         >
           <div class="todo-item-content content">
             <input class="checkbox" type="checkbox" v-model="todo.completed" />
@@ -133,7 +133,7 @@ onMounted(() => {
                   <div class="label">提示时间</div>
                   <ASelect v-model="todo.scheduled.config.cron" :options="CRON_OPTIONS" placeholder="请选择定期任务配置" />
                 </div>
-                <div class="form-item w-4/5">
+                <div class="form-item w-4/5 mb-8px">
                   <div class="label">发送的提示消息</div>
                   <AInput v-model="todo.scheduled.config.message" type="textarea" placeholder="请输入发送的提示消息" />
                 </div>
@@ -214,8 +214,9 @@ onMounted(() => {
   .collapse {
     position: absolute;
     left: 8px;
+    padding-bottom: 0;
     top: 42px;
-    height: 190px;
+    height: 180px;
     background-color: #fff;
     width: calc(100% - 16px);
     overflow: auto;
