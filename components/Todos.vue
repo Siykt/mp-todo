@@ -57,7 +57,7 @@ const showAddInput = () => {
 const enabledScheduled = (todo: TodoItem, enabled: boolean) => {
   todo.scheduled.enabled = enabled;
   if (enabled && !todo.scheduled.config) {
-    todo.scheduled.config = { id: nanoid(), message: '' };
+    todo.scheduled.config = { id: nanoid(), message: '', cron: CRON_OPTIONS[0].value };
   }
 };
 
