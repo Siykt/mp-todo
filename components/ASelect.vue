@@ -8,7 +8,7 @@ interface AInputProps {
   options: { label: string; value: any }[];
 }
 
-defineProps<AInputProps>();
+const props = defineProps<AInputProps>();
 const emits = defineEmits(['update:modelValue', 'blur', 'focus', 'change']);
 
 const inputRef = ref<HTMLInputElement>();
@@ -21,8 +21,11 @@ const blur = () => {
 
 const selectWrapRef = ref<HTMLDivElement>();
 const selectRect = ref<DOMRect>();
-const selectValue = ref<any>();
-const selectedLabel = ref('');
+const selectValue = ref<any>(props.modelValue);
+const selectedLabel = computed(() => {
+  const option = props.options.find(item => item.value === selectValue.value);
+  return option?.label;
+});
 const show = ref(false);
 const open = () => {
   selectRect.value = selectWrapRef.value?.getBoundingClientRect();
@@ -31,7 +34,6 @@ const open = () => {
 
 const handleSelect = ({ value, label }: { label: string; value: any }) => {
   selectValue.value = value;
-  selectedLabel.value = label;
   show.value = false;
   emits('update:modelValue', value);
 };
