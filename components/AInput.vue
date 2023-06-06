@@ -3,6 +3,7 @@ interface AInputProps {
   modelValue?: any;
   placeholder?: string;
   type?: string;
+  rows?: number;
 }
 
 const inputRef = ref<HTMLInputElement>();
@@ -15,6 +16,7 @@ const blur = () => {
 
 withDefaults(defineProps<AInputProps>(), {
   type: 'text',
+  rows: 3,
 });
 defineEmits(['update:modelValue', 'blur', 'focus', 'change']);
 defineExpose({ focus, blur });
@@ -22,7 +24,9 @@ defineExpose({ focus, blur });
 <template>
   <div class="form-input">
     <input
+      v-if="type !== 'textarea'"
       ref="inputRef"
+      class="input"
       :value="modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       @blur="$emit('blur', $event)"
@@ -30,6 +34,19 @@ defineExpose({ focus, blur });
       @change="$emit('change', $event)"
       :placeholder="placeholder"
       :type="type"
+    />
+    <textarea
+      v-else
+      :value="modelValue"
+      ref="inputRef"
+      class="input"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @blur="$emit('blur', $event)"
+      @focus="$emit('focus', $event)"
+      @change="$emit('change', $event)"
+      :placeholder="placeholder"
+      :type="type"
+      :rows="rows"
     />
     <label />
   </div>
@@ -53,7 +70,7 @@ defineExpose({ focus, blur });
     transition: all 0.3s ease-in-out 0s;
     border-radius: 8px;
   }
-  input {
+  .input {
     margin: 0px;
     border: none;
     border-radius: 0px;
@@ -64,6 +81,7 @@ defineExpose({ focus, blur });
     flex: 1 1 0%;
     height: 100%;
     color: rgb(66, 82, 110);
+    resize: none;
     &:focus {
       outline: none;
       & + label {
