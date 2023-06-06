@@ -68,7 +68,7 @@ onMounted(() => {
     <div class="w-full h-1px my2 px-2">
       <div class="w-full h-full bg-#ddd"></div>
     </div>
-    <div class="flex flex-col py2 px4">
+    <div class="flex flex-col py2 px4 w-full">
       <button class="btn" @click="showAddInput">
         <i class="mdi:plus"></i>
         添加分组
