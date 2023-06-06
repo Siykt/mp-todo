@@ -20,12 +20,12 @@ async function fetchQStash(config: QStashConfig & { body?: any }) {
 }
 
 export default defineEventHandler(async event => {
-  const { Authorization, delay, cron, maxRetry } = await readBody<QStashConfig>(event);
-  const { URL } = useRuntimeConfig();
+  const { Authorization, delay, cron, maxRetry } = (await readBody<QStashConfig>(event)) ?? {};
+
+  if (!Authorization) throw new Error('Authorization不能为空');
+
   const headers = getHeaders(event);
-
-  if (!Authorization) throw new Error('Authorization is required');
-
+  const { URL } = useRuntimeConfig();
   let url: string = URL ?? headers.origin ?? 'https://todo.antpro.me';
   // !fix 使用环境检查而不是URL检查
   if (url.includes('192.168') || url.includes('localhost') || url.includes('127.0.0.1')) url = 'https://todo.antpro.me';
