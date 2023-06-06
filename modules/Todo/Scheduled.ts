@@ -14,8 +14,7 @@ export interface QStashConfig {
   maxRetry?: number;
 }
 
-export interface TodoScheduled {
+export interface TodoScheduled extends Omit<QStashConfig, 'Authorization' | 'URL'> {
   id: string;
   message: string;
-  config: QStashConfig;
 }

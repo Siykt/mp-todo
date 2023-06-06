@@ -11,9 +11,9 @@ export interface TodoInfo {
   /** 是否完成 */
   completed: boolean;
   /** 定时提醒配置 */
-  scheduled?: {
+  scheduled: {
     enabled: boolean;
-    config: TodoScheduled;
+    config?: TodoScheduled;
   };
 }
 
