@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { d } from 'vue-bundle-renderer/dist/types-b178c7f3';
 import { useSidesStore } from '~/lib/hooks/useTodoStore';
 
 const { init, sides, activeSide, upsetSide } = useSidesStore();
@@ -46,8 +47,8 @@ onMounted(() => {
           v-for="side in sides"
           :key="side.id"
           class="side-item"
-          :class="{ active: activeSide.id === side.id }"
-          @click="activeSide = side"
+          :class="{ active: activeSide.id === side.id, disabled: isShowSettings }"
+          @click="!isShowSettings && (activeSide = side)"
         >
           <i class="mdi:bookshelf"></i>
           <span class="ml-4px">{{ side.title }}</span>
@@ -81,7 +82,7 @@ onMounted(() => {
       </button>
       <button v-else key="todo" class="btn" @click="isShowSettings = false">
         <i class="mdi:format-list-group-plus"></i>
-        TODO
+        TODOS
       </button>
     </div>
   </div>
@@ -106,6 +107,14 @@ onMounted(() => {
   &:hover {
     color: #6c6cc9;
     background: #e7eaed;
+  }
+  &.disabled {
+    cursor: not-allowed;
+    color: #999;
+    &:hover {
+      color: #999;
+      background: transparent;
+    }
   }
 }
 .add-input {
