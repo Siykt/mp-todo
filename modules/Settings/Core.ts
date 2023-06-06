@@ -4,7 +4,7 @@ export interface Settings {
    * @description 用于自动触发定时任务
    * @see https://docs.upstash.com/qstash/apiexamples
    */
-  QStashToken?: string;
+  authorization?: string;
 
   /**
    * 邮件发送配置
