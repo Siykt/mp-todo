@@ -43,8 +43,10 @@ onMounted(() => {
 });
 </script>
 <template>
-  <h1 class="p3 flex items-center m0 text-xl font-medium text-#333 bg-#e7eaed">
-    <img class="w-42px h-42px mr-6px" :src="LogoPNG" alt="logo.png" />
+  <h1 class="flex items-center text-xl font-medium text-#333 p3 m0 bg-#e7eaed">
+    <a href="https://www.antpro.me/" title="Siykt的博客">
+      <img class="w-42px h-42px mr-6px" :src="LogoPNG" alt="logo.png" />
+    </a>
     <span>TODO</span>
   </h1>
   <div class="p2 flex flex-1 gap-2 overflow-hidden">
