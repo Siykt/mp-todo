@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useEventListener, useIntervalFn } from '@vueuse/core';
+import { throttle } from 'lodash';
+import { useEventListener } from '@vueuse/core';
 
 interface AInputProps {
   modelValue?: any;
@@ -35,29 +36,26 @@ const handleSelect = ({ value, label }: { label: string; value: any }) => {
   emits('update:modelValue', value);
 };
 
+const handleScroll = throttle((e: Event) => {
+  if (!show.value) return;
+  const el = e.target as HTMLElement;
+  if (selectWrapRef.value && el.contains(selectWrapRef.value)) {
+    selectRect.value = selectWrapRef.value?.getBoundingClientRect();
+  }
+}, 10);
+
 defineExpose({ focus, blur, open });
-
-// const { pause, resume } = useIntervalFn(
-//   () => {
-//     selectRect.value = selectWrapRef.value?.getBoundingClientRect();
-//   },
-//   500,
-//   { immediate: false }
-// );
-
-// watch(
-//   () => show.value,
-//   show => (show ? resume() : pause())
-// );
-
 onMounted(() => {
   useEventListener('click', e => {
     if (show.value && !selectWrapRef.value?.contains(e.target as Element)) show.value = false;
   });
-
   useEventListener('keydown', e => {
     if (show.value && e.key === 'Escape') show.value = false;
   });
+  window.addEventListener('scroll', handleScroll, true);
+});
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll, true);
 });
 </script>
 <template>
@@ -69,16 +67,15 @@ onMounted(() => {
     <i class="mdi:chevron-up text-16px transition" :class="{ 'transform-rotate-180deg': show }" />
     <Teleport to="body">
       <Transition name="fade">
-        <div
-          v-if="selectRect && show"
-          class="select-popover"
-          :style="{
-            width: selectRect.width + 'px',
-            top: selectRect.y + selectRect.height + 4 + 'px',
-            left: selectRect.left + 'px',
-          }"
-        >
-          <div class="select-popover-inner">
+        <div v-if="selectRect && show" class="select-popover">
+          <div
+            class="select-popover-inner"
+            :style="{
+              width: selectRect.width + 'px',
+              top: selectRect.y + selectRect.height + 4 + 'px',
+              left: selectRect.left + 'px',
+            }"
+          >
             <div
               class="select-popover-item"
               v-for="(option, i) in options"
@@ -132,6 +129,7 @@ onMounted(() => {
   z-index: 999;
   width: 100%;
   .select-popover-inner {
+    position: absolute;
     width: 100%;
     display: flex;
     flex-direction: column;
