@@ -27,7 +27,7 @@ const CRON_OPTIONS = [
   },
 ];
 
-const adding = ref(true);
+const adding = ref(false);
 const newTodo = ref<Omit<TodoInfo, 'id' | 'group'>>(cloneDeep(DEFAULT_TODO));
 const addTodo = () => {
   if (newTodo.value.title) {
