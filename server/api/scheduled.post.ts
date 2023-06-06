@@ -1,6 +1,8 @@
 import { QStashConfig } from '../../modules/Todo/Scheduled';
 
-async function fetchQStash(config: QStashConfig & { body?: any }) {
+type QStashConfigAndBody = QStashConfig & { body?: any };
+
+async function fetchQStash(config: QStashConfigAndBody) {
   const { Authorization, URL, delay, cron, maxRetry, body } = config;
 
   const headers: Record<string, string> = { Authorization: `Bearer ${Authorization}` };
@@ -10,17 +12,16 @@ async function fetchQStash(config: QStashConfig & { body?: any }) {
   if (typeof maxRetry !== 'undefined') headers['Upstash-Retries'] = maxRetry.toString();
 
   console.log('config ->', config);
-  const res = await $fetch(`https://qstash.upstash.io/v1/publish/${URL}`, {
+  const res = await $fetch<{ messageId: string }>(`https://qstash.upstash.io/v1/publish/${URL}`, {
     method: 'POST',
     headers,
     body,
   });
-  console.log('res ->', config, res);
   return res as any;
 }
 
 export default defineEventHandler(async event => {
-  const { Authorization, delay, cron, maxRetry } = (await readBody<QStashConfig>(event)) ?? {};
+  const { Authorization, delay, cron, maxRetry, body } = (await readBody<QStashConfigAndBody>(event)) ?? {};
 
   if (!Authorization) throw new Error('Authorization不能为空');
 
@@ -36,6 +37,6 @@ export default defineEventHandler(async event => {
     delay,
     cron,
     maxRetry,
-    body: { message: 'test' },
+    body,
   });
 });
