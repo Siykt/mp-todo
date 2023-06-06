@@ -17,4 +17,7 @@ export default defineNuxtConfig({
     username: 'AntPro',
   },
   modules: ['@unocss/nuxt'],
+  alias: {
+    lodash: 'lodash-es',
+  },
 });
