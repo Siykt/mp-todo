@@ -5,8 +5,8 @@ import { AddScheduledConfig, CancelScheduledConfig, ScheduledEntry } from '../..
  * @param config 配置
  */
 export async function cancelScheduled(config: CancelScheduledConfig) {
-  const { authorization, scheduledId } = config;
-  const res = await $fetch<{ status: string; error: string }>(`https://qstash.upstash.io/v1/schedules/${scheduledId}`, {
+  const { authorization, scheduleId } = config;
+  const res = await $fetch<{ status: string; error: string }>(`https://qstash.upstash.io/v1/schedules/${scheduleId}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${authorization}` },
   });

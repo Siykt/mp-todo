@@ -22,7 +22,7 @@ export interface TodoScheduled extends Omit<QStashConfig, 'Authorization' | 'URL
 }
 
 export interface CancelScheduledConfig {
-  scheduledId: string;
+  scheduleId: string;
   authorization: string;
 }
 
