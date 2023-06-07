@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    QSTASH_AUTHORIZATION: '',
     SMTP: {
       Host: '',
       Port: '',

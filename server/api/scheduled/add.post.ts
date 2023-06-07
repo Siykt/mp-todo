@@ -2,7 +2,8 @@ import { AddScheduledConfig } from '../../../modules/Todo/Scheduled';
 import { addScheduled } from '../../external/QStashAPI';
 
 export default defineEventHandler(async event => {
-  const { authorization, delay, cron, maxRetry, body } = (await readBody<AddScheduledConfig>(event)) ?? {};
+  const { QSTASH_AUTHORIZATION } = useRuntimeConfig();
+  const { authorization = QSTASH_AUTHORIZATION, delay, cron, maxRetry, body } = (await readBody<AddScheduledConfig>(event)) ?? {};
 
   if (!authorization) throw new Error('Authorization不能为空');
 
