@@ -102,9 +102,10 @@ async function sendMail(body: MailBody) {
 }
 
 export default defineEventHandler(async event => {
-  const body = (await readBody<MailBody>(event)) ?? {};
-  const { SMTP } = useRuntimeConfig();
+  const body = (await readBody<Partial<MailBody> & { data: any }>(event)) ?? {};
+  const { SMTP, RECEIVE_EMAIL } = useRuntimeConfig();
   await sendMail({
+    to: RECEIVE_EMAIL,
     ...body,
     config: {
       SMTPHost: SMTP.Host,

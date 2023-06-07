@@ -90,6 +90,7 @@ const addScheduled = async (todo: TodoInfo) => {
       authorization: settings.value.authorization,
       body: {
         id: todo.id,
+        to: settings.value.email,
         title: todo.title,
         message: todo.scheduled.config.message,
       },

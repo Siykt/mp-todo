@@ -11,6 +11,7 @@ export interface Settings {
    * @description 用于发送邮件通知
    * @see https://nodemailer.com/smtp/
    */
+  email?: string;
   SMTPHost?: string;
   SMTPPort?: number;
   SMTPUser?: string;

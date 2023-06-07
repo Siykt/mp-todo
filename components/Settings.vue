@@ -42,6 +42,12 @@ const { data: auth } = await useFetch('/api/checkAuth');
       <div class="body">
         <form>
           <div class="form-item">
+            <div class="label">接受提示邮件的邮箱地址</div>
+            <div class="value">
+              <AInput v-model="settings.email" placeholder="请输入邮箱地址" @blur="saveLocalSettings" />
+            </div>
+          </div>
+          <div class="form-item">
             <div class="label">SMTPHost</div>
             <div class="value">
               <AInput v-model="settings.SMTPHost" placeholder="请输入SMTPHost" @blur="saveLocalSettings" />
