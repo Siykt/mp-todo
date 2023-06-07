@@ -17,4 +17,6 @@ export interface QStashConfig {
 export interface TodoScheduled extends Omit<QStashConfig, 'Authorization' | 'URL'> {
   id: string;
   message: string;
+  /** scheduleId 用于取消 schedule */
+  scheduleId?: string;
 }

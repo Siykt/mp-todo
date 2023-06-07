@@ -1,4 +1,4 @@
-import { QStashConfig } from '../../modules/Todo/Scheduled';
+import { QStashConfig } from '../../../modules/Todo/Scheduled';
 
 type QStashConfigAndBody = QStashConfig & { body?: any };
 
@@ -11,13 +11,12 @@ async function fetchQStash(config: QStashConfigAndBody) {
   if (typeof delay !== 'undefined') headers['Upstash-Delay'] = delay.toString();
   if (typeof maxRetry !== 'undefined') headers['Upstash-Retries'] = maxRetry.toString();
 
-  console.log('config ->', config);
-  const res = await $fetch<{ messageId: string }>(`https://qstash.upstash.io/v1/publish/${URL}`, {
+  const res = await $fetch<{ scheduleId: string }>(`https://qstash.upstash.io/v1/publish/${URL}`, {
     method: 'POST',
     headers,
     body,
   });
-  return res as any;
+  return res;
 }
 
 export default defineEventHandler(async event => {
@@ -33,7 +32,7 @@ export default defineEventHandler(async event => {
   if (url.endsWith('/')) url = url.slice(0, -1);
   return fetchQStash({
     Authorization,
-    URL: `${url.endsWith('/') ? url.slice(0, -1) : url}/scheduled-callback`,
+    URL: `${url.endsWith('/') ? url.slice(0, -1) : url}/mail`,
     delay,
     cron,
     maxRetry,

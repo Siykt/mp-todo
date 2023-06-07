@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core';
+import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import { useTodosStore } from '~/lib/hooks/useTodoStore';
 import { TodoInfo } from '~/modules/Todo/Core';
 import { cloneDeep } from 'lodash';
 import { nanoid } from 'nanoid';
+import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
 const { activeTodos, activeSide, upsetTodo, init } = useTodosStore();
 
@@ -37,14 +38,8 @@ const addTodo = () => {
   adding.value = false;
 };
 
-type TodoItem = TodoInfo & { collapsed: boolean };
-const todos = computed<TodoItem[]>(() =>
-  activeTodos.value.map(todo => {
-    (todo as TodoItem).collapsed = false;
-    return todo as TodoItem;
-  })
-);
-
+const todos = computed(() => activeTodos.value || []);
+const collapsedMap = ref(new Set<string>());
 const addInputRef = ref<HTMLInputElement>();
 const showAddInput = () => {
   adding.value = true;
@@ -54,11 +49,61 @@ const showAddInput = () => {
   });
 };
 
-const enabledScheduled = (todo: TodoItem, enabled: boolean) => {
+const enabledScheduled = async (todo: TodoInfo, enabled: boolean) => {
   todo.scheduled.enabled = enabled;
   if (enabled && !todo.scheduled.config) {
     todo.scheduled.config = { id: nanoid(), message: '', cron: CRON_OPTIONS[0].value };
   }
+  await updateTodo(todo);
+};
+
+// 增量同步scheduled以减少QStash的请求
+const incrementTodoMap = ref(new Map<string, TodoInfo>());
+const { isPending, start, stop } = useTimeoutFn(
+  () => {
+    // TODO 实现同步scheduled, 需要考虑正在请求中的场景
+    incrementTodoMap.value.forEach(async todo => {
+      // if (todo.scheduled.config?.scheduleId) {
+      //   await useFetch('/api/scheduled/cancel', {
+      //     method: 'POST',
+      //     body: {
+      //       authorization: settings.value.authorization,
+      //       scheduleId: todo.scheduled.config.scheduleId,
+      //     },
+      //   });
+      // }
+      // await addScheduled(todo).catch(err => console.error('[AddScheduled]', err));
+      incrementTodoMap.value.delete(todo.id);
+    });
+  },
+  5000,
+  { immediate: false }
+);
+const updateTodo = async (todo: TodoInfo) => {
+  const enabled = !todo.completed && todo.scheduled.enabled;
+  // console.log('isPending ->', isPending.value, enabled);
+  enabled && stop();
+  await upsetTodo(todo);
+  incrementTodoMap.value.set(todo.id, todo);
+  enabled && start();
+};
+
+const { settings } = useSettingsStore();
+const addScheduled = async (todo: TodoInfo) => {
+  if (!todo.scheduled.enabled || !todo.scheduled.config) return;
+  const { data } = await useFetch('/api/scheduled/add', {
+    method: 'POST',
+    body: {
+      ...todo.scheduled.config,
+      Authorization: settings.value.authorization,
+      body: {
+        ...todo,
+        scheduled: undefined,
+      },
+    },
+  });
+  todo.scheduled.config.scheduleId = data.value?.scheduleId;
+  await upsetTodo(todo);
 };
 
 init();
@@ -107,22 +152,22 @@ onMounted(() => {
         <div
           class="todo-item"
           v-for="todo in todos"
-          :class="{ completed: todo.completed, 'mb-192px': todo.collapsed, active: todo.collapsed }"
+          :class="{ completed: todo.completed, 'mb-192px': collapsedMap.has(todo.id), active: collapsedMap.has(todo.id) }"
         >
           <div class="todo-item-content content">
             <input class="checkbox" type="checkbox" v-model="todo.completed" />
             <p class="m0 text-14px flex-1">{{ todo.title }}</p>
             <i
               class="mdi:chevron-up text-16px transition"
-              :class="{ 'transform-rotate-180deg': todo.collapsed }"
-              @click="todo.collapsed = !todo.collapsed"
+              :class="{ 'transform-rotate-180deg': collapsedMap.has(todo.id) }"
+              @click="collapsedMap.has(todo.id) ? collapsedMap.delete(todo.id) : collapsedMap.add(todo.id)"
             />
           </div>
           <Transition name="fade">
-            <form v-if="todo.collapsed" class="collapse">
+            <form v-if="collapsedMap.has(todo.id)" class="collapse">
               <div class="form-item w-4/5">
                 <div class="label">TODO的详细描述</div>
-                <AInput v-model="todo.description" type="textarea" placeholder="请输入详细描述" />
+                <AInput v-model="todo.description" type="textarea" @change="updateTodo(todo)" placeholder="请输入详细描述" />
               </div>
               <div class="form-item flex flex-row items-center gap-2">
                 <div class="label">定时邮件推送</div>
@@ -131,11 +176,21 @@ onMounted(() => {
               <div v-if="todo.scheduled.enabled && todo.scheduled.config" class="flex flex-col">
                 <div class="form-item w-2/5">
                   <div class="label">提示时间</div>
-                  <ASelect v-model="todo.scheduled.config.cron" :options="CRON_OPTIONS" placeholder="请选择定期任务配置" />
+                  <ASelect
+                    v-model="todo.scheduled.config.cron"
+                    @change="updateTodo(todo)"
+                    :options="CRON_OPTIONS"
+                    placeholder="请选择定期任务配置"
+                  />
                 </div>
                 <div class="form-item w-4/5 mb-8px">
                   <div class="label">发送的提示消息</div>
-                  <AInput v-model="todo.scheduled.config.message" type="textarea" placeholder="请输入发送的提示消息" />
+                  <AInput
+                    @change="updateTodo(todo)"
+                    v-model="todo.scheduled.config.message"
+                    type="textarea"
+                    placeholder="请输入发送的提示消息"
+                  />
                 </div>
               </div>
             </form>

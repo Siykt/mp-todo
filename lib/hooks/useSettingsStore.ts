@@ -14,6 +14,8 @@ export const useSettingsStore = () => {
     await storage.set('settings', settings.value);
   };
 
+  onMounted(getLocalSettings);
+
   return {
     settings,
     getLocalSettings,
