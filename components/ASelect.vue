@@ -30,12 +30,15 @@ const show = ref(false);
 const open = () => {
   selectRect.value = selectWrapRef.value?.getBoundingClientRect();
   show.value = true;
+  emits('focus');
 };
 
-const handleSelect = ({ value, label }: { label: string; value: any }) => {
+const handleSelect = ({ value }: { label: string; value: any }) => {
   selectValue.value = value;
   show.value = false;
   emits('update:modelValue', value);
+  emits('change', value);
+  emits('blur');
 };
 
 const handleScroll = throttle((e: Event) => {
@@ -49,10 +52,16 @@ const handleScroll = throttle((e: Event) => {
 defineExpose({ focus, blur, open });
 onMounted(() => {
   useEventListener('click', e => {
-    if (show.value && !selectWrapRef.value?.contains(e.target as Element)) show.value = false;
+    if (show.value && !selectWrapRef.value?.contains(e.target as Element)) {
+      show.value = false;
+      emits('blur');
+    }
   });
   useEventListener('keydown', e => {
-    if (show.value && e.key === 'Escape') show.value = false;
+    if (show.value && e.key === 'Escape') {
+      show.value = false;
+      emits('blur');
+    }
   });
   window.addEventListener('scroll', handleScroll, true);
 });
