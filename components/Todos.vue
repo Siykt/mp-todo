@@ -63,16 +63,8 @@ const { isPending, start, stop } = useTimeoutFn(
   () => {
     // TODO 实现同步scheduled, 需要考虑正在请求中的场景
     incrementTodoMap.value.forEach(async todo => {
-      // if (todo.scheduled.config?.scheduleId) {
-      //   await useFetch('/api/scheduled/cancel', {
-      //     method: 'POST',
-      //     body: {
-      //       authorization: settings.value.authorization,
-      //       scheduleId: todo.scheduled.config.scheduleId,
-      //     },
-      //   });
-      // }
-      // await addScheduled(todo).catch(err => console.error('[AddScheduled]', err));
+      await cancelScheduled(todo).catch(err => console.error('[CancelScheduled]', err));
+      await addScheduled(todo).catch(err => console.error('[AddScheduled]', err));
       incrementTodoMap.value.delete(todo.id);
     });
   },
@@ -95,14 +87,27 @@ const addScheduled = async (todo: TodoInfo) => {
     method: 'POST',
     body: {
       ...todo.scheduled.config,
-      Authorization: settings.value.authorization,
+      authorization: settings.value.authorization,
       body: {
-        ...todo,
-        scheduled: undefined,
+        id: todo.id,
+        title: todo.title,
+        message: todo.scheduled.config.message,
       },
     },
   });
   todo.scheduled.config.scheduleId = data.value?.scheduleId;
+  await upsetTodo(todo);
+};
+const cancelScheduled = async (todo: TodoInfo) => {
+  if (!todo.scheduled.config?.scheduleId) return;
+  await useFetch('/api/scheduled/cancel', {
+    method: 'POST',
+    body: {
+      authorization: settings.value.authorization,
+      scheduleId: todo.scheduled.config.scheduleId,
+    },
+  });
+  todo.scheduled.config.scheduleId = undefined;
   await upsetTodo(todo);
 };
 
@@ -167,7 +172,13 @@ onMounted(() => {
             <form v-if="collapsedMap.has(todo.id)" class="collapse">
               <div class="form-item w-4/5">
                 <div class="label">TODO的详细描述</div>
-                <AInput v-model="todo.description" type="textarea" @change="updateTodo(todo)" placeholder="请输入详细描述" />
+                <AInput
+                  v-model="todo.description"
+                  type="textarea"
+                  @focus="stop"
+                  @blur="updateTodo(todo)"
+                  placeholder="请输入详细描述"
+                />
               </div>
               <div class="form-item flex flex-row items-center gap-2">
                 <div class="label">定时邮件推送</div>
@@ -178,18 +189,20 @@ onMounted(() => {
                   <div class="label">提示时间</div>
                   <ASelect
                     v-model="todo.scheduled.config.cron"
-                    @change="updateTodo(todo)"
                     :options="CRON_OPTIONS"
                     placeholder="请选择定期任务配置"
+                    @focus="stop"
+                    @change="updateTodo(todo)"
                   />
                 </div>
                 <div class="form-item w-4/5 mb-8px">
                   <div class="label">发送的提示消息</div>
                   <AInput
-                    @change="updateTodo(todo)"
                     v-model="todo.scheduled.config.message"
                     type="textarea"
                     placeholder="请输入发送的提示消息"
+                    @focus="stop"
+                    @blur="updateTodo(todo)"
                   />
                 </div>
               </div>
