@@ -32,7 +32,7 @@ export default defineEventHandler(async event => {
   if (url.endsWith('/')) url = url.slice(0, -1);
   return fetchQStash({
     Authorization,
-    URL: `${url.endsWith('/') ? url.slice(0, -1) : url}/mail`,
+    URL: `${url.endsWith('/') ? url.slice(0, -1) : url}/api/mail`,
     delay,
     cron,
     maxRetry,
