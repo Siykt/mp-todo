@@ -1,42 +1,51 @@
-# Nuxt 3 Minimal Starter
+# TODO 消息助手
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## 介绍
 
-## Setup
+消息助手是一个基于网页版的 TODOS，可以添加任务与提醒。
 
-Make sure to install the dependencies:
+## 使用
+
+### 注册 QStash
+
+在 [QStash](https://upstash.com) 注册账号，然后在 [qstash](https://console.upstash.com/qstash) 页面获取 `token`。
+
+![](https://files.catbox.moe/39xxf8.png)
+
+### 安装
 
 ```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
 pnpm install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`
+### 运行
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
-## Production
+## 配置
 
-Build the application for production:
+在项目根目录下创建 `.env` 文件，添加以下内容：
 
 ```bash
-npm run build
+NUXT_SMTP_HOST=SMTP_HOST
+NUXT_SMTP_PORT=SMTP_PORT
+NUXT_SMTP_TLS=false
+NUXT_SMTP_USER=SMTP_USER
+NUXT_SMTP_FROM=SMTP_FROM
+NUXT_SMTP_PASS=SMTP_PASS
+NUXT_QSTASH_AUTHORIZATION=QSTASH_AUTHORIZATION
 ```
 
-Locally preview production build:
+或者直接在应用中添加、修改
 
-```bash
-npm run preview
-```
+![](https://files.catbox.moe/zxc7p7.png)
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## 部署
+
+### vercel
+
+在 [vercel](https://vercel.com) 上部署，需要在项目中添加以上环境变量即可
+
+![](https://files.catbox.moe/s896c5.png)
