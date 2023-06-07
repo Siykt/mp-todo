@@ -88,6 +88,10 @@ defineExpose({ focus, blur });
         border-color: #6c6cc9;
       }
     }
+    &:-webkit-autofill,
+    &:-webkit-autofill:focus {
+      transition: background-color 600000s 0s, color 600000s 0s;
+    }
   }
 }
 </style>

@@ -2,10 +2,21 @@
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
 const { settings, saveLocalSettings } = useSettingsStore();
-const { data: auth } = await useFetch('/api/checkAuth');
+const auth = ref(false);
+
+onMounted(async () => {
+  const { data } = await useFetch('/api/checkAuth');
+  auth.value = data.value || false;
+});
 </script>
 <template>
-  <div v-if="!auth" class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
+  <div class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
+    <div v-if="auth" class="bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
+      <div class="flex flex-col items-center justify-center gap-2">
+        <i class="mdi:emoticon-happy-outline text-#6c6cc9 text-42px"></i>
+        <span class="text-#6c6cc9 text-14px">服务端已配置，您的本地设置将会覆盖服务端的配置</span>
+      </div>
+    </div>
     <!-- QStash配置 -->
     <div class="card">
       <div class="title">
@@ -42,7 +53,7 @@ const { data: auth } = await useFetch('/api/checkAuth');
       <div class="body">
         <form>
           <div class="form-item">
-            <div class="label">接受提示邮件的邮箱地址</div>
+            <div class="label">接收消息提示的邮箱地址</div>
             <div class="value">
               <AInput v-model="settings.email" placeholder="请输入邮箱地址" @blur="saveLocalSettings" />
             </div>
@@ -85,12 +96,6 @@ const { data: auth } = await useFetch('/api/checkAuth');
           </div>
         </form>
       </div>
-    </div>
-  </div>
-  <div v-else class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
-    <div class="flex flex-col items-center justify-center gap-2 mt-8">
-      <i class="mdi:emoticon-happy-outline text-#6c6cc9 text-42px"></i>
-      <span class="text-#6c6cc9 text-14px">服务端已配置</span>
     </div>
   </div>
 </template>
