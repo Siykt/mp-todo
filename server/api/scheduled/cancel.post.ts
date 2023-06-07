@@ -1,4 +1,5 @@
-import { CancelScheduledConfig, cancelScheduled } from '../../external/QStashAPI';
+import { CancelScheduledConfig } from '../../../modules/Todo/Scheduled';
+import { cancelScheduled } from '../../external/QStashAPI';
 
 export default defineEventHandler(async event => {
   const { authorization, scheduledId } = (await readBody<CancelScheduledConfig>(event)) ?? {};

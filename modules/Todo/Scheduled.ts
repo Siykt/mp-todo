@@ -20,3 +20,34 @@ export interface TodoScheduled extends Omit<QStashConfig, 'Authorization' | 'URL
   /** scheduleId 用于取消 schedule */
   scheduleId?: string;
 }
+
+export interface CancelScheduledConfig {
+  scheduledId: string;
+  authorization: string;
+}
+
+export interface AddScheduledConfig extends Omit<QStashConfig, 'Authorization'> {
+  /** MessageID */
+  id?: string;
+  /** 授权 */
+  authorization: string;
+  /** 发送的内容 */
+  body?: any;
+  /** 定期任务配置 */
+  cron: string;
+}
+
+export interface ScheduledEntry {
+  scheduleId: string;
+  cron: string;
+  settings: {
+    retries: number;
+  };
+  destination: {
+    type: string;
+    url: string;
+  };
+  content: {
+    body: any;
+  };
+}
