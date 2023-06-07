@@ -7,23 +7,23 @@ import { nanoid } from 'nanoid';
 
 const { activeTodos, activeSide, upsetTodo, init } = useTodosStore();
 
+const date = new Date();
+const curHour = date.getHours();
+const curDay = date.getDay();
+const curDate = date.getDate();
 const DEFAULT_TODO = { title: '', completed: false, scheduled: { enabled: false } };
 const CRON_OPTIONS = [
   {
     label: '每天',
-    value: '0 0 9 * * *',
+    value: `0 ${curHour} * * *`,
   },
   {
     label: '每周',
-    value: '0 0 9 * * 1',
+    value: `0 ${curHour} * * ${curDay === 7 ? 0 : curDate}}`,
   },
   {
     label: '每月',
-    value: '0 0 9 1 * *',
-  },
-  {
-    label: '每年',
-    value: '0 0 9 1 1 *',
+    value: `0 ${curHour} ${curDate} * *`,
   },
 ];
 
