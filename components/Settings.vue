@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
-const { getLocalSettings, settings, saveLocalSettings } = useSettingsStore();
-
-getLocalSettings();
+const { settings, saveLocalSettings } = useSettingsStore();
+const { data: auth } = await useFetch('/api/checkAuth');
 </script>
 <template>
-  <div class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
+  <div v-if="!auth" class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
     <!-- QStash配置 -->
     <div class="card">
       <div class="title">
@@ -80,6 +79,12 @@ getLocalSettings();
           </div>
         </form>
       </div>
+    </div>
+  </div>
+  <div v-else class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
+    <div class="flex flex-col items-center justify-center gap-2 mt-8">
+      <i class="mdi:emoticon-happy-outline text-#6c6cc9 text-42px"></i>
+      <span class="text-#6c6cc9 text-14px">服务端已配置</span>
     </div>
   </div>
 </template>

@@ -17,6 +17,7 @@ export default defineNuxtConfig({
       TLS: '',
       User: '',
       Pass: '',
+      From: '',
     },
   },
   appConfig: {
