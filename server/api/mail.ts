@@ -103,6 +103,18 @@ async function sendMail(body: MailBody) {
 
 export default defineEventHandler(async event => {
   const body = (await readBody<MailBody>(event)) ?? {};
-  await sendMail(body);
+  const { SMTP } = useRuntimeConfig();
+  await sendMail({
+    ...body,
+    config: {
+      SMTPHost: SMTP.Host,
+      SMTPPort: SMTP.Port,
+      SMTPUser: SMTP.User,
+      SMTPPass: SMTP.Pass,
+      SMTPTLS: SMTP.TLS,
+      SMTPFrom: SMTP.From,
+      ...body.config,
+    },
+  });
   return { message: 'success' };
 });

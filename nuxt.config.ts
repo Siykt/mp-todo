@@ -10,8 +10,13 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    MP_TOKEN: '',
-    MP_ENCODING_AES_KEY: '',
+    SMTP: {
+      Host: '',
+      Port: '',
+      TLS: '',
+      User: '',
+      Pass: '',
+    },
   },
   appConfig: {
     username: 'AntPro',
