@@ -2,9 +2,10 @@
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
 const { settings, saveLocalSettings } = useSettingsStore();
-const auth = ref(false);
+const auth = useState('settingAuth', () => false);
 
 onMounted(async () => {
+  if (auth.value) return;
   const { data } = await useFetch('/api/checkAuth');
   auth.value = data.value || false;
 });
