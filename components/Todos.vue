@@ -158,7 +158,7 @@ onMounted(() => {
         <div
           class="todo-item"
           v-for="todo in todos"
-          :class="{ completed: todo.completed, 'mb-192px': collapsedMap.has(todo.id), active: collapsedMap.has(todo.id) }"
+          :class="{ completed: todo.completed, 'mb-190px': collapsedMap.has(todo.id), active: collapsedMap.has(todo.id) }"
         >
           <div class="todo-item-content content">
             <input class="checkbox" type="checkbox" v-model="todo.completed" />
@@ -256,7 +256,7 @@ onMounted(() => {
 .todo-item {
   position: relative;
   width: 100%;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   user-select: none;
   flex: 0 0 42px;
   .content {
@@ -285,7 +285,7 @@ onMounted(() => {
     left: 8px;
     padding-bottom: 0;
     top: 42px;
-    height: 180px;
+    height: 178px;
     background-color: #fff;
     width: calc(100% - 16px);
     overflow: auto;
