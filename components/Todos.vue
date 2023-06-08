@@ -308,7 +308,7 @@ onMounted(() => {
   &.active,
   &:hover {
     .content {
-      background: #e6e6f1;
+      background: #e7eaed;
     }
   }
   &.completed {
