@@ -114,6 +114,19 @@ const cancelScheduled = async (todo: TodoInfo) => {
   await upsetTodo(todo);
 };
 
+const editingItemId = ref<TodoInfo['id']>();
+const handleDblClick = (e: MouseEvent, todo: TodoInfo) => {
+  const el = e.target as HTMLElement;
+  if (todo.completed || el.getAttribute('d-name') !== 'title') return;
+  const p = el.parentElement as HTMLElement;
+  editingItemId.value = todo.id;
+  nextTick(() => {
+    const input = p?.querySelector('.todo-input') as HTMLInputElement;
+    input?.focus();
+    input?.select();
+  });
+};
+
 init();
 onMounted(() => {
   // Tab添加
@@ -158,17 +171,37 @@ onMounted(() => {
           />
         </div>
         <div
-          class="todo-item"
           v-for="todo in todos"
-          :class="{ completed: todo.completed, 'mb-190px': collapsedMap.has(todo.id), active: collapsedMap.has(todo.id) }"
+          @dblclick="handleDblClick($event, todo)"
+          :class="{
+            completed: todo.completed,
+            'mb-190px': collapsedMap.has(todo.id),
+            active: collapsedMap.has(todo.id) || editingItemId === todo.id,
+          }"
+          class="todo-item"
         >
           <div class="todo-item-content content">
-            <input class="checkbox" type="checkbox" v-model="todo.completed" />
-            <p class="m0 text-14px flex-1">{{ todo.title }}</p>
+            <input
+              class="checkbox"
+              type="checkbox"
+              :checked="todo.completed"
+              @click="updateTodo({ ...todo, completed: !todo.completed })"
+            />
+            <p v-if="editingItemId !== todo.id" class="m0 text-14px flex-1" d-name="title">{{ todo.title }}</p>
+            <input
+              v-else
+              class="todo-input flex-1"
+              type="text"
+              v-model="todo.title"
+              autofocus
+              placeholder="请输入TODO标题"
+              @blur="updateTodo(todo), (editingItemId = undefined)"
+              @keyup.enter="updateTodo(todo), (editingItemId = undefined)"
+            />
             <i
-              class="mdi:chevron-up text-16px transition"
-              :class="{ 'transform-rotate-180deg': collapsedMap.has(todo.id) }"
-              @click="collapsedMap.has(todo.id) ? collapsedMap.delete(todo.id) : collapsedMap.add(todo.id)"
+              class="mdi:chevron-up text-16px transition cursor-pointer"
+              :class="{ 'transform-rotate-180deg': collapsedMap.has(todo.id), 'cursor-not-allowed': todo.completed }"
+              @click="todo.completed || collapsedMap.has(todo.id) ? collapsedMap.delete(todo.id) : collapsedMap.add(todo.id)"
             />
           </div>
           <Transition name="fade">
@@ -245,7 +278,7 @@ onMounted(() => {
   gap: 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   .todo-input {
-    margin-left: -1px;
+    padding: 0;
     border: 0;
     font-size: 14px;
     transition: all 0.3s;
@@ -263,7 +296,7 @@ onMounted(() => {
   flex: 0 0 42px;
   .content {
     height: 100%;
-    cursor: pointer;
+    // cursor: pointer;
     position: absolute;
     left: 0;
     top: 0;
