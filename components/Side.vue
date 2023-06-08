@@ -34,6 +34,18 @@ const addSide = async () => {
 
 const isShowSettings = useState('isShowSettings', () => false);
 
+const editingSideId = ref('');
+const handleEditSide = (e: MouseEvent) => {
+  const el = e.target as HTMLElement;
+  if (el.tagName === 'INPUT') return;
+  editingSideId.value = activeSide.value.id;
+  nextTick(() => {
+    const input = document.querySelector('.side-item input') as HTMLInputElement;
+    input.focus();
+    input.select();
+  });
+};
+
 init();
 onMounted(() => {
   sidesRef.value?.scroll({ top: 0, behavior: 'smooth' });
@@ -47,12 +59,22 @@ onMounted(() => {
           v-for="side in sides"
           :key="side.id"
           class="side-item"
-          :class="{ active: activeSide.id === side.id, disabled: isShowSettings }"
+          :class="{ active: activeSide.id === side.id, disabled: isShowSettings, '!p0': editingSideId === side.id }"
           @click="!isShowSettings && (activeSide = side)"
+          @dblclick="handleEditSide"
         >
-          <i class="mdi:bookshelf"></i>
-          <span class="ml-4px">{{ side.title }}</span>
-          <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
+          <template v-if="editingSideId !== side.id">
+            <i class="mdi:bookshelf"></i>
+            <span v-if="editingSideId !== side.id" class="ml-4px flex-1">{{ side.title }}</span>
+            <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
+          </template>
+          <input
+            v-else
+            class="add-input !mb0"
+            v-model="side.title"
+            @blur="upsetSide(side), (editingSideId = '')"
+            @keyup.enter="upsetSide(side), (editingSideId = '')"
+          />
         </div>
         <div v-if="adding" class="relative" key="addInput">
           <i class="mdi:plus absolute top-50% translate-y--50% text-#6c6cc9 left-2"></i>
@@ -98,7 +120,8 @@ onMounted(() => {
   padding: 0 8px;
   color: #666;
   font-size: 15px;
-  transition: all 0.3s;
+  transition-property: background, color;
+  transition-duration: 0.3s;
   cursor: pointer;
   border-radius: 4px;
   margin-bottom: 4px;
