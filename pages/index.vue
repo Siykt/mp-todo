@@ -2,6 +2,13 @@
 import LogoPNG from '~/assets/logo.png';
 
 const isShowSettings = useState('isShowSettings', () => false);
+
+const auth = useState('settingAuth', () => false);
+onMounted(async () => {
+  if (auth.value) return;
+  const { data } = await useFetch('/api/checkAuth');
+  auth.value = data.value || false;
+});
 </script>
 <template>
   <h1 class="flex items-center text-xl font-medium text-#333 p3 m0 bg-#e7eaed">

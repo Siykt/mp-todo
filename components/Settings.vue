@@ -3,12 +3,6 @@ import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
 const { settings, saveLocalSettings } = useSettingsStore();
 const auth = useState('settingAuth', () => false);
-
-onMounted(async () => {
-  if (auth.value) return;
-  const { data } = await useFetch('/api/checkAuth');
-  auth.value = data.value || false;
-});
 </script>
 <template>
   <div class="flex-1 bg-#f3f4f6 rounded-md p4 min-h-0 overflow-y-auto">
