@@ -179,7 +179,7 @@ onMounted(() => {
     <h2 class="m0 text-18px text-#333 flex items-center">
       <span>{{ activeSide.title }}</span>
       <button class="ml-auto btn" @click="showAddInput"><i class="mdi:plus"></i></button>
-      <button class="ml-1 btn"><i class="mdi:dots-horizontal"></i></button>
+      <!-- <button class="ml-1 btn"><i class="mdi:dots-horizontal"></i></button> -->
     </h2>
     <Transition name="list">
       <TransitionGroup
