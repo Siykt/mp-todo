@@ -2,7 +2,7 @@
 import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import { useTodosStore } from '~/lib/hooks/useTodoStore';
 import { TodoInfo } from '~/modules/Todo/Core';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { nanoid } from 'nanoid';
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
@@ -38,7 +38,7 @@ const addTodo = () => {
   adding.value = false;
 };
 
-const todos = computed(() => activeTodos.value || []);
+const todos = computed(() => cloneDeep(activeTodos.value || []));
 const collapsedMap = ref(new Set<string>());
 const addInputRef = ref<HTMLInputElement>();
 const showAddInput = () => {
@@ -73,7 +73,9 @@ const { isPending, start, stop } = useTimeoutFn(
 );
 const updateTodo = async (todo: TodoInfo) => {
   const enabled = !todo.completed && todo.scheduled.enabled;
-  // console.log('isPending ->', isPending.value, enabled);
+  const oldTodo = activeTodos.value.find(item => item.id === todo.id) as TodoInfo;
+  // 检查是否修改
+  if (isEqual(todo, oldTodo)) return;
   enabled && stop();
   await upsetTodo(todo);
   incrementTodoMap.value.set(todo.id, todo);
