@@ -84,7 +84,7 @@ const updateTodo = async (todo: TodoInfo) => {
 
 const { settings } = useSettingsStore();
 const addScheduled = async (todo: TodoInfo) => {
-  if (!todo.scheduled.enabled || !todo.scheduled.config) return;
+  if (todo.completed || !todo.scheduled.enabled || !todo.scheduled.config) return;
   const { data } = await useFetch('/api/scheduled/add', {
     method: 'POST',
     body: {
