@@ -6,7 +6,7 @@ import { cloneDeep, isEqual } from 'lodash';
 import { nanoid } from 'nanoid';
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';
 
-const { activeTodos, activeSide, upsetTodo, init } = useTodosStore();
+const { activeTodos, activeSide, upsetTodo, init, deleteTodo } = useTodosStore();
 
 const date = new Date();
 const curHour = date.getHours();
@@ -38,6 +38,7 @@ const addTodo = () => {
   adding.value = false;
 };
 
+// 待办事项列表, cloneDeep用于判断是否修改
 const todos = computed(() => cloneDeep(activeTodos.value || []));
 const collapsedMap = ref(new Set<string>());
 const addInputRef = ref<HTMLInputElement>();
@@ -115,16 +116,45 @@ const cancelScheduled = async (todo: TodoInfo) => {
 };
 
 const editingItemId = ref<TodoInfo['id']>();
-const handleDblClick = (e: MouseEvent, todo: TodoInfo) => {
-  const el = e.target as HTMLElement;
-  if (todo.completed || el.getAttribute('d-name') !== 'title') return;
-  const p = el.parentElement as HTMLElement;
+const handleEditTodo = (todo: TodoInfo, e?: MouseEvent) => {
+  const el = e?.target as HTMLElement;
+  if (el && el.getAttribute('d-name') !== 'title') return;
   editingItemId.value = todo.id;
   nextTick(() => {
-    const input = p?.querySelector('.todo-input') as HTMLInputElement;
+    const input = document.querySelector('.todo-item .todo-input') as HTMLInputElement;
     input?.focus();
     input?.select();
   });
+};
+
+const chooseTodo = ref<TodoInfo>();
+const menuRef = ref<HTMLDivElement>();
+const showMenu = ref(false);
+const position = ref({ x: 0, y: 0 });
+const handleCloseMenu = (e?: MouseEvent) => {
+  if (e && menuRef.value?.contains(e.target as Node)) return;
+  showMenu.value = false;
+  chooseTodo.value = undefined;
+  document.removeEventListener('click', handleCloseMenu);
+  document.removeEventListener('dblclick', handleCloseMenu);
+  document.removeEventListener('contextmenu', handleCloseMenu);
+};
+const handleShowMenu = (e: MouseEvent, todo: TodoInfo) => {
+  chooseTodo.value = todo;
+  e.stopPropagation();
+  e.preventDefault();
+  showMenu.value = true;
+  position.value = { x: e.clientX, y: e.clientY };
+  document.addEventListener('click', handleCloseMenu, true);
+  document.addEventListener('dblclick', handleCloseMenu, true);
+  document.addEventListener('contextmenu', handleCloseMenu, true);
+};
+
+const handleDeleteTodo = () => {
+  if (!chooseTodo.value) return;
+  cancelScheduled(chooseTodo.value);
+  deleteTodo(chooseTodo.value.id);
+  handleCloseMenu();
 };
 
 init();
@@ -172,12 +202,13 @@ onMounted(() => {
         </div>
         <div
           v-for="todo in todos"
-          @dblclick="handleDblClick($event, todo)"
           :class="{
             completed: todo.completed,
             'mb-190px': collapsedMap.has(todo.id),
             active: collapsedMap.has(todo.id) || editingItemId === todo.id,
           }"
+          @dblclick="handleEditTodo(todo, $event)"
+          @contextmenu="handleShowMenu($event, todo)"
           class="todo-item"
         >
           <div class="todo-item-content content">
@@ -193,7 +224,6 @@ onMounted(() => {
               class="todo-input flex-1"
               type="text"
               v-model="todo.title"
-              autofocus
               placeholder="请输入TODO标题"
               @blur="updateTodo(todo), (editingItemId = undefined)"
               @keyup.enter="updateTodo(todo), (editingItemId = undefined)"
@@ -252,6 +282,26 @@ onMounted(() => {
       </div>
     </Transition>
   </div>
+  <Transition name="fade">
+    <div
+      v-if="showMenu"
+      ref="menuRef"
+      :style="{
+        left: position.x + 'px',
+        top: position.y + 'px',
+      }"
+      class="bg-#fff w86px h70px rounded fixed z-10 shadow-lg flex flex-col justify-center transition-property-all transition-duration-200"
+    >
+      <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleEditTodo(chooseTodo as TodoInfo), handleCloseMenu()">
+        <i class="mdi:playlist-edit"></i>
+        编辑
+      </button>
+      <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleDeleteTodo()">
+        <i class="mdi:delete-sweep-outline"></i>
+        删除
+      </button>
+    </div>
+  </Transition>
 </template>
 <style lang="less" scoped>
 .btn {
@@ -261,6 +311,22 @@ onMounted(() => {
   border: 0;
   transition: all 0.3s;
   background: transparent;
+  cursor: pointer;
+  &:hover {
+    color: #6c6cc9;
+  }
+}
+.menuBtn {
+  display: flex;
+  align-items: center;
+  border: 0;
+  height: 40px;
+  padding-left: 0;
+  background: transparent;
+  gap: 4px;
+  color: #333;
+  font-size: 15px;
+  transition: color 0.3s, background 0.3s;
   cursor: pointer;
   &:hover {
     color: #6c6cc9;

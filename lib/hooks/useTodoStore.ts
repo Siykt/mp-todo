@@ -9,7 +9,7 @@ export const useSidesStore = () => {
   const init = async () => {
     if (process.server) return;
     sides.value = await storage.get<TodoGroup[]>('sides', [{ id: 'default', title: '默认分组', total: 0 }]);
-    activeSide.value = sides.value[0];
+    activeSide.value = sides.value[0] ?? {};
   };
 
   const upsetSide = async (side: Omit<TodoGroup, 'id' | 'total'> & { id?: string }) => {
@@ -29,11 +29,21 @@ export const useSidesStore = () => {
     return curSide;
   };
 
+  const deleteSide = async (id: string) => {
+    if (sides.value.length === 1) return;
+    sides.value = sides.value.filter(s => s.id !== id);
+    const todos = useState<TodoInfo[]>('todos', () => []);
+    todos.value = todos.value.filter(t => t.group !== id);
+    // TODO 需要处理删除失败的情况
+    await Promise.all([storage.set('todos', todos.value), storage.set('sides', sides.value)]);
+  };
+
   return {
     init,
     sides,
     activeSide,
     upsetSide,
+    deleteSide,
   };
 };
 
@@ -68,8 +78,19 @@ export const useTodosStore = () => {
     return curTodo;
   };
 
+  const deleteTodo = async (id: string) => {
+    todos.value = todos.value.filter(t => t.id !== id);
+    sides.value = sides.value.map(side => {
+      if (side.id === activeSide.value.id) side.total--;
+      return side;
+    });
+    await Promise.all([storage.set('todos', todos.value), storage.set('sides', sides.value)]);
+  };
+
   return {
     init,
+    todos,
+    deleteTodo,
     activeSide,
     activeTodos,
     upsetTodo,

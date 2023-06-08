@@ -2,7 +2,7 @@
 // something
 </script>
 <template>
-  <div class="w-screen h-screen relative flex content">
+  <div class="w-screen h-screen relative flex content" @contextmenu="$event.preventDefault()">
     <div class="absolute top-0 left-0 bottom-0 right-0 bg bg-center bg-cover w-screen h-screen"></div>
     <div class="absolute top-0 left-0 bottom-0 right-0 bg-gray-800 bg-opacity-75 w-screen h-screen"></div>
     <div

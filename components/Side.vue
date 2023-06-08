@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { d } from 'vue-bundle-renderer/dist/types-b178c7f3';
+import { useToast } from '~/lib/hooks/useToast';
 import { useSidesStore } from '~/lib/hooks/useTodoStore';
 
-const { init, sides, activeSide, upsetSide } = useSidesStore();
+const { init, sides, activeSide, upsetSide, deleteSide } = useSidesStore();
 
 const adding = ref(false);
 const sidesRef = ref<HTMLDivElement>();
@@ -35,15 +36,49 @@ const addSide = async () => {
 const isShowSettings = useState('isShowSettings', () => false);
 
 const editingSideId = ref('');
-const handleEditSide = (e: MouseEvent) => {
-  const el = e.target as HTMLElement;
-  if (el.tagName === 'INPUT') return;
-  editingSideId.value = activeSide.value.id;
+const handleEditSide = (sideId: string, e?: MouseEvent) => {
+  if ((e?.target as HTMLElement)?.tagName === 'INPUT') return;
+  editingSideId.value = sideId;
   nextTick(() => {
     const input = document.querySelector('.side-item input') as HTMLInputElement;
     input.focus();
     input.select();
   });
+};
+
+const toast = useToast();
+const chooseSideId = ref('');
+const menuRef = ref<HTMLDivElement>();
+const showMenu = ref(false);
+const position = ref({ x: 0, y: 0 });
+const handleCloseMenu = (e?: MouseEvent) => {
+  if (e && menuRef.value?.contains(e.target as Node)) return;
+  showMenu.value = false;
+  chooseSideId.value = '';
+  document.removeEventListener('click', handleCloseMenu);
+  document.removeEventListener('dblclick', handleCloseMenu);
+  document.removeEventListener('contextmenu', handleCloseMenu);
+};
+const handleShowMenu = (e: MouseEvent, sideId: string) => {
+  chooseSideId.value = sideId;
+  e.stopPropagation();
+  e.preventDefault();
+  showMenu.value = true;
+  position.value = { x: e.clientX, y: e.clientY };
+  document.addEventListener('click', handleCloseMenu, true);
+  document.addEventListener('dblclick', handleCloseMenu, true);
+  document.addEventListener('contextmenu', handleCloseMenu, true);
+};
+
+const handleDeleteSide = () => {
+  if (!chooseSideId.value) return;
+  if (sides.value.length === 1) {
+    toast.info('至少保留一个分组');
+    handleCloseMenu();
+    return;
+  }
+  deleteSide(chooseSideId.value);
+  handleCloseMenu();
 };
 
 init();
@@ -61,7 +96,8 @@ onMounted(() => {
           class="side-item"
           :class="{ active: activeSide.id === side.id, disabled: isShowSettings, '!p0': editingSideId === side.id }"
           @click="!isShowSettings && (activeSide = side)"
-          @dblclick="handleEditSide"
+          @dblclick="handleEditSide(side.id, $event)"
+          @contextmenu="handleShowMenu($event, side.id)"
         >
           <template v-if="editingSideId !== side.id">
             <i class="mdi:bookshelf"></i>
@@ -80,7 +116,6 @@ onMounted(() => {
           <i class="mdi:plus absolute top-50% translate-y--50% text-#6c6cc9 left-2"></i>
           <input
             ref="addInputRef"
-            autofocus
             class="add-input"
             v-model="sideTitle"
             @blur="addSide"
@@ -108,6 +143,26 @@ onMounted(() => {
       </button>
     </div>
   </div>
+  <Transition name="fade">
+    <div
+      v-if="showMenu"
+      ref="menuRef"
+      :style="{
+        left: position.x + 'px',
+        top: position.y + 'px',
+      }"
+      class="bg-#fff w86px h70px rounded fixed z-10 shadow-lg flex flex-col justify-center transition-property-all transition-duration-200"
+    >
+      <button class="btn !px2 !hover:bg-#e7eaed" @click="handleEditSide(chooseSideId), handleCloseMenu()">
+        <i class="mdi:playlist-edit"></i>
+        编辑
+      </button>
+      <button class="btn !px2 !hover:bg-#e7eaed" @click="handleDeleteSide()">
+        <i class="mdi:delete-sweep-outline"></i>
+        删除
+      </button>
+    </div>
+  </Transition>
 </template>
 
 <style lang="less" scoped>
@@ -167,7 +222,7 @@ onMounted(() => {
   gap: 4px;
   color: #333;
   font-size: 15px;
-  transition: color 0.3s;
+  transition: color 0.3s, background 0.3s;
   cursor: pointer;
   &:hover {
     color: #6c6cc9;
