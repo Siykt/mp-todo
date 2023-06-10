@@ -1,6 +1,9 @@
 {
-  "name": "nuxt-app",
+  "name": "mp-todo",
   "private": true,
+  "version": "1.0.0",
+  "description": "消息助手是一个基于网页版的 TODOS，可以添加任务与提醒",
+  "author": "Siykt",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
