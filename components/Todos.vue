@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useEventListener, useTimeoutFn } from '@vueuse/core';
 import { useTodosStore } from '~/lib/hooks/useTodoStore';
-import { TodoInfo } from '~/modules/Todo/Core';
+import { TodoInfo } from '~/models/Todo/Core';
 import { cloneDeep, isEqual } from 'lodash';
 import { nanoid } from 'nanoid';
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore';

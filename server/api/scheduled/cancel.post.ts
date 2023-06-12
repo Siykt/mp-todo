@@ -1,4 +1,4 @@
-import { CancelScheduledConfig } from '../../../modules/Todo/Scheduled';
+import { CancelScheduledConfig } from '../../../models/Todo/Scheduled';
 import { cancelScheduled } from '../../external/QStashAPI';
 
 export default defineEventHandler(async event => {

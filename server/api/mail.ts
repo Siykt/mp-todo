@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { Attachment } from 'nodemailer/lib/mailer';
-import { Settings } from '../../modules/Settings/Core';
+import { Settings } from '../../models/Settings/Core';
 
 interface MailBody {
   to: string;

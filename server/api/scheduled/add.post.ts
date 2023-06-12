@@ -1,4 +1,4 @@
-import { AddScheduledConfig } from '../../../modules/Todo/Scheduled';
+import { AddScheduledConfig } from '../../../models/Todo/Scheduled';
 import { addScheduled } from '../../external/QStashAPI';
 
 export default defineEventHandler(async event => {

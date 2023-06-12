@@ -1,4 +1,4 @@
-import { TodoGroup, TodoInfo } from '~/modules/Todo/Core';
+import { TodoGroup, TodoInfo } from '~/models/Todo/Core';
 import storage from '../storage';
 import { nanoid } from 'nanoid';
 

@@ -1,4 +1,4 @@
-import { Settings } from '~/modules/Settings/Core';
+import { Settings } from '~/models/Settings/Core';
 import storage from '../storage';
 
 export const useSettingsStore = () => {

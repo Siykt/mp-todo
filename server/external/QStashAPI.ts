@@ -1,4 +1,4 @@
-import { AddScheduledConfig, CancelScheduledConfig, ScheduledEntry } from '../../modules/Todo/Scheduled';
+import { AddScheduledConfig, CancelScheduledConfig, ScheduledEntry } from '../../models/Todo/Scheduled';
 
 /**
  * 取消定时任务
