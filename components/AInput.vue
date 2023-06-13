@@ -1,26 +1,27 @@
 <script setup lang="ts">
 interface AInputProps {
-  modelValue?: any;
-  placeholder?: string;
-  type?: string;
-  rows?: number;
+  modelValue?: any
+  placeholder?: string
+  type?: string
+  rows?: number
 }
-
-const inputRef = ref<HTMLInputElement>();
-const focus = () => {
-  inputRef.value?.focus();
-};
-const blur = () => {
-  inputRef.value?.blur();
-};
 
 withDefaults(defineProps<AInputProps>(), {
   type: 'text',
   rows: 3,
-});
-defineEmits(['update:modelValue', 'blur', 'focus', 'change']);
-defineExpose({ focus, blur });
+})
+defineEmits(['update:modelValue', 'blur', 'focus', 'change'])
+const inputRef = ref<HTMLInputElement>()
+function focus() {
+  inputRef.value?.focus()
+}
+function blur() {
+  inputRef.value?.blur()
+}
+
+defineExpose({ focus, blur })
 </script>
+
 <template>
   <div class="form-input">
     <input
@@ -28,25 +29,25 @@ defineExpose({ focus, blur });
       ref="inputRef"
       class="input"
       :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-      @blur="$emit('blur', $event)"
-      @focus="$emit('focus', $event)"
-      @change="$emit('change', $event)"
       :placeholder="placeholder"
       :type="type"
-    />
-    <textarea
-      v-else
-      :value="modelValue"
-      ref="inputRef"
-      class="input"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       @blur="$emit('blur', $event)"
       @focus="$emit('focus', $event)"
       @change="$emit('change', $event)"
+    >
+    <textarea
+      v-else
+      ref="inputRef"
+      :value="modelValue"
+      class="input"
       :placeholder="placeholder"
       :type="type"
       :rows="rows"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      @blur="$emit('blur', $event)"
+      @focus="$emit('focus', $event)"
+      @change="$emit('change', $event)"
     />
     <label />
   </div>

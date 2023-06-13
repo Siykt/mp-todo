@@ -1,24 +1,24 @@
-import { TodoScheduled } from './Scheduled';
+import type { TodoScheduled } from './Scheduled'
 
 export interface TodoInfo {
-  id: string;
+  id: string
   /** 分组ID */
-  group: string;
+  group: string
   /** 标题 */
-  title: string;
+  title: string
   /** 描述 */
-  description?: string;
+  description?: string
   /** 是否完成 */
-  completed: boolean;
+  completed: boolean
   /** 定时提醒配置 */
   scheduled: {
-    enabled: boolean;
-    config?: TodoScheduled;
-  };
+    enabled: boolean
+    config?: TodoScheduled
+  }
 }
 
 export interface TodoGroup {
-  id: string;
-  title: string;
-  total: number;
+  id: string
+  title: string
+  total: number
 }

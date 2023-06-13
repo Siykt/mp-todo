@@ -1,144 +1,148 @@
 <script setup lang="ts">
-import { d } from 'vue-bundle-renderer/dist/types-b178c7f3';
-import { useToast } from '~/lib/hooks/useToast';
-import { useSidesStore } from '~/lib/hooks/useTodoStore';
+import { useToast } from '~/lib/hooks/useToast'
+import { useSidesStore } from '~/lib/hooks/useTodoStore'
 
-const { init, sides, activeSide, upsetSide, deleteSide } = useSidesStore();
+const { init, sides, activeSide, upsetSide, deleteSide } = useSidesStore()
 
-const adding = ref(false);
-const sidesRef = ref<HTMLDivElement>();
-const addInputRef = ref<HTMLInputElement>();
-const showAddInput = () => {
-  adding.value = true;
+const adding = ref(false)
+const sidesRef = ref<HTMLDivElement>()
+const addInputRef = ref<HTMLInputElement>()
+function showAddInput() {
+  adding.value = true
   nextTick(() => {
-    if (!sidesRef.value) return;
-    sidesRef.value.scroll({ top: sidesRef.value.scrollHeight, behavior: 'smooth' });
+    if (!sidesRef.value)
+      return
+    sidesRef.value.scroll({ top: sidesRef.value.scrollHeight, behavior: 'smooth' })
     // focus会导致滚动状态停止, 所以需要动态的调整focus的时机
     // https://stackoverflow.com/questions/64611389/scroll-duration-for-behaviour-smooth-in-different-browsers
     setTimeout(() => {
-      addInputRef.value?.focus();
-    }, (sidesRef.value.scrollHeight - sidesRef.value.scrollTop) / 3 + 100);
-  });
-};
+      addInputRef.value?.focus()
+    }, (sidesRef.value.scrollHeight - sidesRef.value.scrollTop) / 3 + 100)
+  })
+}
 
-const sideTitle = ref('');
-const addSide = async () => {
+const sideTitle = ref('')
+async function addSide() {
   if (sideTitle.value) {
-    activeSide.value = await upsetSide({ title: sideTitle.value });
-    sideTitle.value = '';
+    activeSide.value = await upsetSide({ title: sideTitle.value })
+    sideTitle.value = ''
   }
-  adding.value = false;
+  adding.value = false
   nextTick(() => {
-    sidesRef.value?.scroll({ top: sidesRef.value?.scrollHeight, behavior: 'smooth' });
-  });
-};
+    sidesRef.value?.scroll({ top: sidesRef.value?.scrollHeight, behavior: 'smooth' })
+  })
+}
 
-const isShowSettings = useState('isShowSettings', () => false);
+const isShowSettings = useState('isShowSettings', () => false)
 
-const editingSideId = ref('');
-const handleEditSide = (sideId: string, e?: MouseEvent) => {
-  if ((e?.target as HTMLElement)?.tagName === 'INPUT') return;
-  editingSideId.value = sideId;
+const editingSideId = ref('')
+function handleEditSide(sideId: string, e?: MouseEvent) {
+  if ((e?.target as HTMLElement)?.tagName === 'INPUT')
+    return
+  editingSideId.value = sideId
   nextTick(() => {
-    const input = document.querySelector('.side-item input') as HTMLInputElement;
-    input.focus();
-    input.select();
-  });
-};
+    const input = document.querySelector('.side-item input') as HTMLInputElement
+    input.focus()
+    input.select()
+  })
+}
 
-const toast = useToast();
-const chooseSideId = ref('');
-const menuRef = ref<HTMLDivElement>();
-const showMenu = ref(false);
-const position = ref({ x: 0, y: 0 });
-const handleCloseMenu = (e?: MouseEvent) => {
-  if (e && menuRef.value?.contains(e.target as Node)) return;
-  showMenu.value = false;
-  chooseSideId.value = '';
-  document.removeEventListener('click', handleCloseMenu);
-  document.removeEventListener('dblclick', handleCloseMenu);
-  document.removeEventListener('contextmenu', handleCloseMenu);
-};
-const handleShowMenu = (e: MouseEvent, sideId: string) => {
-  chooseSideId.value = sideId;
-  e.stopPropagation();
-  e.preventDefault();
-  showMenu.value = true;
-  position.value = { x: e.clientX, y: e.clientY };
-  document.addEventListener('click', handleCloseMenu, true);
-  document.addEventListener('dblclick', handleCloseMenu, true);
-  document.addEventListener('contextmenu', handleCloseMenu, true);
-};
+const toast = useToast()
+const chooseSideId = ref('')
+const menuRef = ref<HTMLDivElement>()
+const showMenu = ref(false)
+const position = ref({ x: 0, y: 0 })
+function handleCloseMenu(e?: MouseEvent) {
+  if (e && menuRef.value?.contains(e.target as Node))
+    return
+  showMenu.value = false
+  chooseSideId.value = ''
+  document.removeEventListener('click', handleCloseMenu)
+  document.removeEventListener('dblclick', handleCloseMenu)
+  document.removeEventListener('contextmenu', handleCloseMenu)
+}
+function handleShowMenu(e: MouseEvent, sideId: string) {
+  chooseSideId.value = sideId
+  e.stopPropagation()
+  e.preventDefault()
+  showMenu.value = true
+  position.value = { x: e.clientX, y: e.clientY }
+  document.addEventListener('click', handleCloseMenu, true)
+  document.addEventListener('dblclick', handleCloseMenu, true)
+  document.addEventListener('contextmenu', handleCloseMenu, true)
+}
 
-const handleDeleteSide = () => {
-  if (!chooseSideId.value) return;
+function handleDeleteSide() {
+  if (!chooseSideId.value)
+    return
   if (sides.value.length === 1) {
-    toast.info('至少保留一个分组');
-    handleCloseMenu();
-    return;
+    toast.info('至少保留一个分组')
+    handleCloseMenu()
+    return
   }
-  deleteSide(chooseSideId.value);
-  handleCloseMenu();
-};
+  deleteSide(chooseSideId.value)
+  handleCloseMenu()
+}
 
-init();
+init()
 onMounted(() => {
-  sidesRef.value?.scroll({ top: 0, behavior: 'smooth' });
-});
+  sidesRef.value?.scroll({ top: 0, behavior: 'smooth' })
+})
 </script>
+
 <template>
-  <div class="w-230px flex flex-col h-full bg-#f3f4f6 rounded-md py2 items-start min-h-0">
-    <div ref="sidesRef" class="flex-1 flex flex-col px2 relative w-full overflow-hidden overflow-y-auto">
+  <div class="h-full min-h-0 w-230px flex flex-col items-start rounded-md bg-#f3f4f6 py2">
+    <div ref="sidesRef" class="relative w-full flex flex-1 flex-col overflow-hidden overflow-y-auto px2">
       <TransitionGroup name="list">
         <div
           v-for="side in sides"
           :key="side.id"
           class="side-item"
-          :class="{ active: activeSide.id === side.id, disabled: isShowSettings, '!p0': editingSideId === side.id }"
+          :class="{ 'active': activeSide.id === side.id, 'disabled': isShowSettings, '!p0': editingSideId === side.id }"
           @click="!isShowSettings && (activeSide = side)"
           @dblclick="handleEditSide(side.id, $event)"
           @contextmenu="handleShowMenu($event, side.id)"
         >
           <template v-if="editingSideId !== side.id">
-            <i class="mdi:bookshelf"></i>
+            <i class="mdi:bookshelf" />
             <span v-if="editingSideId !== side.id" class="ml-4px flex-1">{{ side.title }}</span>
             <span v-if="side.total" class="ml-auto">{{ side.total }}</span>
           </template>
           <input
             v-else
-            class="add-input !mb0"
             v-model="side.title"
+            class="add-input !mb0"
             @blur="upsetSide(side), (editingSideId = '')"
             @keyup.enter="upsetSide(side), (editingSideId = '')"
-          />
+          >
         </div>
-        <div v-if="adding" class="relative" key="addInput">
-          <i class="mdi:plus absolute top-50% translate-y--50% text-#6c6cc9 left-2"></i>
+        <div v-if="adding" key="addInput" class="relative">
+          <i class="mdi:plus absolute left-2 top-50% translate-y--50% text-#6c6cc9" />
           <input
             ref="addInputRef"
-            class="add-input"
             v-model="sideTitle"
+            class="add-input"
+            placeholder="添加一个分组"
             @blur="addSide"
             @keyup.enter="addSide"
-            placeholder="添加一个分组"
-          />
+          >
         </div>
       </TransitionGroup>
     </div>
-    <div class="w-full h-1px my2 px-2">
-      <div class="w-full h-full bg-#ddd"></div>
+    <div class="my2 h-1px w-full px-2">
+      <div class="h-full w-full bg-#ddd" />
     </div>
-    <div class="flex flex-col py2 px4 w-full">
+    <div class="w-full flex flex-col px4 py2">
       <button key="plus" class="btn" @click="showAddInput">
-        <i class="mdi:plus"></i>
+        <i class="mdi:plus" />
         添加分组
       </button>
       <button v-if="!isShowSettings" key="settings" class="btn" @click="isShowSettings = true">
-        <i class="mdi:cog-outline"></i>
+        <i class="mdi:cog-outline" />
         设置
       </button>
       <button v-else key="todo" class="btn" @click="isShowSettings = false">
-        <i class="mdi:format-list-group-plus"></i>
+        <i class="mdi:format-list-group-plus" />
         TODOS
       </button>
     </div>
@@ -148,17 +152,17 @@ onMounted(() => {
       v-if="showMenu"
       ref="menuRef"
       :style="{
-        left: position.x + 'px',
-        top: position.y + 'px',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
       }"
-      class="bg-#fff w86px h70px rounded fixed z-10 shadow-lg flex flex-col justify-center transition-property-all transition-duration-200"
+      class="fixed z-10 h70px w86px flex flex-col justify-center rounded bg-#fff shadow-lg transition-duration-200 transition-property-all"
     >
       <button class="btn !px2 !hover:bg-#e7eaed" @click="handleEditSide(chooseSideId), handleCloseMenu()">
-        <i class="mdi:playlist-edit"></i>
+        <i class="mdi:playlist-edit" />
         编辑
       </button>
       <button class="btn !px2 !hover:bg-#e7eaed" @click="handleDeleteSide()">
-        <i class="mdi:delete-sweep-outline"></i>
+        <i class="mdi:delete-sweep-outline" />
         删除
       </button>
     </div>

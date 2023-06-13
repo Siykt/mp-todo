@@ -1,74 +1,75 @@
 <script setup lang="ts">
-import { throttle } from 'lodash';
-import { useEventListener } from '@vueuse/core';
+import { throttle } from 'lodash'
+import { useEventListener } from '@vueuse/core'
 
 interface AInputProps {
-  modelValue?: any;
-  placeholder?: string;
-  options: { label: string; value: any }[];
+  modelValue?: any
+  placeholder?: string
+  options: { label: string; value: any }[]
 }
 
-const props = defineProps<AInputProps>();
-const emits = defineEmits(['update:modelValue', 'blur', 'focus', 'change']);
+const props = defineProps<AInputProps>()
+const emits = defineEmits(['update:modelValue', 'blur', 'focus', 'change'])
 
-const inputRef = ref<HTMLInputElement>();
-const focus = () => {
-  inputRef.value?.focus();
-};
-const blur = () => {
-  inputRef.value?.blur();
-};
+const inputRef = ref<HTMLInputElement>()
+function focus() {
+  inputRef.value?.focus()
+}
+function blur() {
+  inputRef.value?.blur()
+}
 
-const selectWrapRef = ref<HTMLDivElement>();
-const selectRect = ref<DOMRect>();
-const selectValue = ref<any>(props.modelValue);
+const selectWrapRef = ref<HTMLDivElement>()
+const selectRect = ref<DOMRect>()
+const selectValue = ref<any>(props.modelValue)
 const selectedLabel = computed(() => {
-  const option = props.options.find(item => item.value === selectValue.value);
-  return option?.label;
-});
-const show = ref(false);
-const open = () => {
-  selectRect.value = selectWrapRef.value?.getBoundingClientRect();
-  show.value = true;
-  emits('focus');
-};
+  const option = props.options.find(item => item.value === selectValue.value)
+  return option?.label
+})
+const show = ref(false)
+function open() {
+  selectRect.value = selectWrapRef.value?.getBoundingClientRect()
+  show.value = true
+  emits('focus')
+}
 
-const handleSelect = ({ value }: { label: string; value: any }) => {
-  selectValue.value = value;
-  show.value = false;
-  emits('update:modelValue', value);
-  emits('change', value);
-  emits('blur');
-};
+function handleSelect({ value }: { label: string; value: any }) {
+  selectValue.value = value
+  show.value = false
+  emits('update:modelValue', value)
+  emits('change', value)
+  emits('blur')
+}
 
 const handleScroll = throttle((e: Event) => {
-  if (!show.value) return;
-  const el = e.target as HTMLElement;
-  if (selectWrapRef.value && el.contains(selectWrapRef.value)) {
-    selectRect.value = selectWrapRef.value?.getBoundingClientRect();
-  }
-}, 10);
+  if (!show.value)
+    return
+  const el = e.target as HTMLElement
+  if (selectWrapRef.value && el.contains(selectWrapRef.value))
+    selectRect.value = selectWrapRef.value?.getBoundingClientRect()
+}, 10)
 
-defineExpose({ focus, blur, open });
+defineExpose({ focus, blur, open })
 onMounted(() => {
-  useEventListener('click', e => {
+  useEventListener('click', (e) => {
     if (show.value && !selectWrapRef.value?.contains(e.target as Element)) {
-      show.value = false;
-      emits('blur');
+      show.value = false
+      emits('blur')
     }
-  });
-  useEventListener('keydown', e => {
+  })
+  useEventListener('keydown', (e) => {
     if (show.value && e.key === 'Escape') {
-      show.value = false;
-      emits('blur');
+      show.value = false
+      emits('blur')
     }
-  });
-  window.addEventListener('scroll', handleScroll, true);
-});
+  })
+  window.addEventListener('scroll', handleScroll, true)
+})
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll, true);
-});
+  window.removeEventListener('scroll', handleScroll, true)
+})
 </script>
+
 <template>
   <div ref="selectWrapRef" class="select" @click="open">
     <div class="selection">
@@ -82,19 +83,19 @@ onUnmounted(() => {
           <div
             class="select-popover-inner"
             :style="{
-              width: selectRect.width + 'px',
-              top: selectRect.y + selectRect.height + 4 + 'px',
-              left: selectRect.left + 'px',
+              width: `${selectRect.width}px`,
+              top: `${selectRect.y + selectRect.height + 4}px`,
+              left: `${selectRect.left}px`,
             }"
           >
             <div
-              class="select-popover-item"
               v-for="(option, i) in options"
               :key="`${i}-${option.value}`"
+              class="select-popover-item"
               @click="handleSelect(option)"
             >
               <i
-                class="mdi:check-bold text-16px mr-2 text-12px text-#333"
+                class="mdi:check-bold mr-2 text-12px text-16px text-#333"
                 :style="{
                   opacity: selectValue === option.value ? 1 : 0,
                 }"

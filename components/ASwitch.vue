@@ -1,19 +1,20 @@
 <script setup lang="ts">
 interface AInputProps {
-  modelValue?: boolean;
+  modelValue?: boolean
 }
 
-defineProps<AInputProps>();
-defineEmits(['update:modelValue', 'change']);
+defineProps<AInputProps>()
+defineEmits(['update:modelValue', 'change'])
 </script>
+
 <template>
   <div
     class="form-switch-input"
     :class="{ checked: modelValue }"
     @click="$emit('update:modelValue', !modelValue), $emit('change', !modelValue)"
   >
-    <input :checked="!!modelValue" type="checkbox" />
-    <label for="SMTPTLS"></label>
+    <input :checked="!!modelValue" type="checkbox">
+    <label for="SMTPTLS" />
   </div>
 </template>
 

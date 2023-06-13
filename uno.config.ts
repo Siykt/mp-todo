@@ -1,4 +1,4 @@
-import { defineConfig, presetAttributify, presetUno, presetIcons, presetWebFonts, presetTypography } from 'unocss';
+import { defineConfig, presetAttributify, presetIcons, presetTypography, presetUno, presetWebFonts } from 'unocss'
 
 export default defineConfig({
   presets: [
@@ -8,7 +8,7 @@ export default defineConfig({
       prefix: ['i-', ''],
       scale: 1.2,
       extraProperties: {
-        display: 'inline-block',
+        'display': 'inline-block',
         'vertical-align': 'middle',
       },
     }),
@@ -20,4 +20,4 @@ export default defineConfig({
     }),
     presetTypography(),
   ],
-});
+})

@@ -3,51 +3,51 @@
  */
 export interface QStashConfig {
   /** 授权 */
-  Authorization: string;
+  Authorization: string
   /** EndPoint */
-  URL: string;
+  URL: string
   /** 延迟 */
-  delay?: number;
+  delay?: number
   /** 定期任务配置 */
-  cron?: string;
+  cron?: string
   /** 最大重试次数 */
-  maxRetry?: number;
+  maxRetry?: number
 }
 
 export interface TodoScheduled extends Omit<QStashConfig, 'Authorization' | 'URL'> {
-  id: string;
-  message: string;
+  id: string
+  message: string
   /** scheduleId 用于取消 schedule */
-  scheduleId?: string;
+  scheduleId?: string
 }
 
 export interface CancelScheduledConfig {
-  scheduleId: string;
-  authorization: string;
+  scheduleId: string
+  authorization: string
 }
 
 export interface AddScheduledConfig extends Omit<QStashConfig, 'Authorization'> {
   /** MessageID */
-  id?: string;
+  id?: string
   /** 授权 */
-  authorization: string;
+  authorization: string
   /** 发送的内容 */
-  body?: any;
+  body?: any
   /** 定期任务配置 */
-  cron: string;
+  cron: string
 }
 
 export interface ScheduledEntry {
-  scheduleId: string;
-  cron: string;
+  scheduleId: string
+  cron: string
   settings: {
-    retries: number;
-  };
+    retries: number
+  }
   destination: {
-    type: string;
-    url: string;
-  };
+    type: string
+    url: string
+  }
   content: {
-    body: any;
-  };
+    body: any
+  }
 }

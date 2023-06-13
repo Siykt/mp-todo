@@ -1,24 +1,26 @@
-import { Settings } from '~/models/Settings/Core';
-import storage from '../storage';
+import storage from '../storage'
+import type { Settings } from '~/models/Settings/Core'
 
-export const useSettingsStore = () => {
-  const settings = useState<Settings>('settings', () => ({ SMTPTLS: false }));
+export function useSettingsStore() {
+  const settings = useState<Settings>('settings', () => ({ SMTPTLS: false }))
 
   const getLocalSettings = async () => {
-    if (process.server) return;
-    settings.value = await storage.get<Settings>('settings', { SMTPTLS: false });
-  };
+    if (process.server)
+      return
+    settings.value = await storage.get<Settings>('settings', { SMTPTLS: false })
+  }
 
   const saveLocalSettings = async () => {
-    if (process.server) return;
-    await storage.set('settings', settings.value);
-  };
+    if (process.server)
+      return
+    await storage.set('settings', settings.value)
+  }
 
-  onMounted(getLocalSettings);
+  onMounted(getLocalSettings)
 
   return {
     settings,
     getLocalSettings,
     saveLocalSettings,
-  };
-};
+  }
+}

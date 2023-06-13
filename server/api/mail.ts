@@ -1,12 +1,12 @@
-import * as nodemailer from 'nodemailer';
-import { Attachment } from 'nodemailer/lib/mailer';
-import { Settings } from '../../models/Settings/Core';
+import * as nodemailer from 'nodemailer'
+import type { Attachment } from 'nodemailer/lib/mailer'
+import type { Settings } from '../../models/Settings/Core'
 
 interface MailBody {
-  to: string;
-  data: { message: string; title: string };
-  attachments?: Attachment[];
-  config: Settings;
+  to: string
+  data: { message: string; title: string }
+  attachments?: Attachment[]
+  config: Settings
 }
 
 async function sendMail(body: MailBody) {
@@ -15,7 +15,7 @@ async function sendMail(body: MailBody) {
     data,
     attachments,
     config: { SMTPHost, SMTPPort, SMTPUser, SMTPPass, SMTPTLS, SMTPFrom },
-  } = body;
+  } = body
   const transporter = nodemailer.createTransport({
     host: SMTPHost,
     port: SMTPPort,
@@ -26,7 +26,7 @@ async function sendMail(body: MailBody) {
     },
     logger: true,
     transactionLog: false,
-  });
+  })
 
   const info = await transporter.sendMail({
     to,
@@ -97,13 +97,13 @@ async function sendMail(body: MailBody) {
       </div>
     `,
     attachments,
-  });
-  return info;
+  })
+  return info
 }
 
-export default defineEventHandler(async event => {
-  const body = (await readBody<Partial<MailBody> & { data: any }>(event)) ?? {};
-  const { SMTP, RECEIVE_EMAIL } = useRuntimeConfig();
+export default defineEventHandler(async (event) => {
+  const body = (await readBody<Partial<MailBody> & { data: any }>(event)) ?? {}
+  const { SMTP, RECEIVE_EMAIL } = useRuntimeConfig()
   await sendMail({
     to: RECEIVE_EMAIL,
     ...body,
@@ -116,6 +116,6 @@ export default defineEventHandler(async event => {
       SMTPFrom: SMTP.From,
       ...body.config,
     },
-  });
-  return { message: 'success' };
-});
+  })
+  return { message: 'success' }
+})
