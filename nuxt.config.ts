@@ -24,8 +24,11 @@ export default defineNuxtConfig({
   appConfig: {
     username: 'AntPro',
   },
-  modules: ['@unocss/nuxt'],
+  modules: ['@unocss/nuxt', '@nuxtjs/eslint-module'],
+  eslint: {
+    lintOnStart: false,
+  },
   alias: {
     lodash: 'lodash-es',
   },
-});
+})
