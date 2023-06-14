@@ -23,7 +23,7 @@ onMounted(async () => {
     <Side />
     <Transition name="list">
       <Settings v-if="isShowSettings" />
-      <Todos />
+      <Todos v-else />
     </Transition>
   </div>
 </template>
