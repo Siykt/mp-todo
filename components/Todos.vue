@@ -300,27 +300,27 @@ onMounted(() => {
         <span class="text-14px text-#6c6cc9">暂无TODO，使用快捷键 Tab 添加</span>
       </div>
     </Transition>
+    <Transition name="fade">
+      <div
+        v-if="showMenu"
+        ref="menuRef"
+        :style="{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+        }"
+        class="fixed z-10 h70px w86px flex flex-col justify-center rounded bg-#fff shadow-lg transition-duration-200 transition-property-all"
+      >
+        <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleEditTodo(chooseTodo as TodoInfo), handleCloseMenu()">
+          <i class="mdi:playlist-edit" />
+          编辑
+        </button>
+        <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleDeleteTodo()">
+          <i class="mdi:delete-sweep-outline" />
+          删除
+        </button>
+      </div>
+    </Transition>
   </div>
-  <Transition name="fade">
-    <div
-      v-if="showMenu"
-      ref="menuRef"
-      :style="{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-      }"
-      class="fixed z-10 h70px w86px flex flex-col justify-center rounded bg-#fff shadow-lg transition-duration-200 transition-property-all"
-    >
-      <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleEditTodo(chooseTodo as TodoInfo), handleCloseMenu()">
-        <i class="mdi:playlist-edit" />
-        编辑
-      </button>
-      <button class="menuBtn !px2 !hover:bg-#e7eaed" @click="handleDeleteTodo()">
-        <i class="mdi:delete-sweep-outline" />
-        删除
-      </button>
-    </div>
-  </Transition>
 </template>
 
 <style lang="less" scoped>
