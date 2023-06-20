@@ -93,7 +93,7 @@ onMounted(() => {
 <template>
   <div class="h-full min-h-0 w-230px flex flex-col items-start rounded-md bg-#f3f4f6 py2">
     <div ref="sidesRef" class="relative w-full flex flex-1 flex-col overflow-hidden overflow-y-auto px2">
-      <TransitionGroup name="list">
+      <TransitionGroup v-if="sides.length" name="list">
         <div
           v-for="side in sides"
           :key="side.id"
