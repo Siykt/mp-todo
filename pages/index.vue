@@ -7,6 +7,7 @@ const auth = useState('settingAuth', () => false)
 onMounted(async () => {
   if (auth.value)
     return
+  await nextTick()
   const { data } = await useFetch('/api/checkAuth')
   auth.value = data.value || false
 })
