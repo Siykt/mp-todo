@@ -14,6 +14,11 @@ export default defineNuxtConfig({
     UPSTASH_REDIS_PATH: '',
     QSTASH_AUTHORIZATION: '',
     RECEIVE_EMAIL: '',
+    AUTHING: {
+      APP_ID: '',
+      APP_SECRET: '',
+      ISSUER: '',
+    },
     SMTP: {
       Host: '',
       Port: '',
