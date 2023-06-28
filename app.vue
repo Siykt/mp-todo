@@ -5,7 +5,7 @@ import '~/styles/global.less'
 </script>
 
 <template>
-  <Layout>
+  <NuxtLayout>
     <NuxtPage />
-  </Layout>
+  </NuxtLayout>
 </template>
