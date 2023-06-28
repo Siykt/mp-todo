@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    APP_DOMAIN: '',
     UPSTASH_REDIS_PATH: '',
     QSTASH_AUTHORIZATION: '',
     RECEIVE_EMAIL: '',
