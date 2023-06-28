@@ -19,7 +19,7 @@ onMounted(async () => {
     </a>
     <span>TODO</span>
   </h1>
-  <div class="flex flex-1 gap-2 overflow-hidden p2">
+  <div v-if="isLogin" class="flex flex-1 gap-2 overflow-hidden p2">
     <Side />
     <Transition name="list">
       <Settings v-if="isShowSettings" />
