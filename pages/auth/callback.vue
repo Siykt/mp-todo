@@ -18,17 +18,3 @@ onMounted(async () => {
     <i class="rotate-animate mdi:loading text-10 text-#6c6cc9" />
   </div>
 </template>
-
-<style lang="less" scoped>
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(359deg);
-  }
-}
-.rotate-animate {
-  animation: rotate 1s linear infinite;
-}
-</style>

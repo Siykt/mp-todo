@@ -26,4 +26,7 @@ onMounted(async () => {
       <Todos v-else />
     </Transition>
   </div>
+  <div v-else class="h-full w-full flex items-center justify-center">
+    <i class="rotate-animate mdi:loading text-10 text-#6c6cc9" />
+  </div>
 </template>
