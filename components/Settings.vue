@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { useAuth } from '~/lib/hooks/useAuth'
 import { useSettingsStore } from '~/lib/hooks/useSettingsStore'
 
 const { settings, saveLocalSettings } = useSettingsStore()
-const auth = useState('settingAuth', () => false)
+const { configured } = useAuth()
 </script>
 
 <template>
   <div class="min-h-0 flex-1 overflow-y-auto rounded-md bg-#f3f4f6 p4">
-    <div v-if="auth" class="min-h-0 overflow-y-auto rounded-md bg-#f3f4f6 p4">
+    <div v-if="configured" class="min-h-0 overflow-y-auto rounded-md bg-#f3f4f6 p4">
       <div class="flex flex-col items-center justify-center gap-2">
         <i class="mdi:emoticon-happy-outline text-42px text-#6c6cc9" />
         <span class="text-14px text-#6c6cc9">服务端已配置，您的本地设置将会覆盖服务端的配置</span>

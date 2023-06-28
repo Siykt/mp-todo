@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import LogoPNG from '~/assets/logo.png'
+import { useAuth } from '~/lib/hooks/useAuth'
 
+const router = useRouter()
 const isShowSettings = useState('isShowSettings', () => false)
 
-const auth = useState('settingAuth', () => false)
+const { isLogin } = useAuth()
+
 onMounted(async () => {
-  if (auth.value)
-    return
-  await nextTick()
-  const { data } = await useFetch('/api/checkAuth')
-  auth.value = data.value || false
+  if (!isLogin.value)
+    return router.push('/login')
 })
 </script>
 
 <template>
   <h1 class="m0 flex items-center bg-#e7eaed p3 text-xl font-medium text-#333">
     <a href="https://www.antpro.me/" title="Siykt的博客">
-      <img class="mr-6px h-42px w-42px" :src="LogoPNG" alt="logo.png">
+      <img class="mr-6px h-42px w-42px" src="~/assets/logo.png" alt="logo.png">
     </a>
     <span>TODO</span>
   </h1>
