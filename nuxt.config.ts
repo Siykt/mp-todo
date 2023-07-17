@@ -32,7 +32,7 @@ export default defineNuxtConfig({
   appConfig: {
     username: 'AntPro',
   },
-  modules: ['@unocss/nuxt', '@nuxtjs/eslint-module'],
+  modules: ['@unocss/nuxt', '@nuxtjs/eslint-module', '@nuxtjs/supabase'],
   eslint: {
     lintOnStart: false,
   },
