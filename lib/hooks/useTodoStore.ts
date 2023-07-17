@@ -1,13 +1,15 @@
 import { nanoid } from 'nanoid'
 import storage from '../storage'
+import { isBrowser } from '~/lib/isBrowser'
 import type { TodoGroup, TodoInfo } from '~/models/Todo/Core'
 
 export function useSidesStore() {
   const sides = useState<TodoGroup[]>('sides', () => [])
   const activeSide = useState<TodoGroup>('activeSide', () => ({ id: 'default', title: '默认分组', total: 0 }))
+  const browser = isBrowser()
 
   const init = async () => {
-    if (process.server)
+    if (!browser)
       return
     sides.value = await storage.get<TodoGroup[]>('sides', [{ id: 'default', title: '默认分组', total: 0 }])
     activeSide.value = sides.value[0] ?? {}
@@ -54,11 +56,11 @@ export function useTodosStore() {
   const { activeSide, sides } = useSidesStore()
   const todos = useState<TodoInfo[]>('todos', () => [])
   const activeTodos = computed(() => todos.value.filter(todo => todo.group === activeSide.value.id))
+  const browser = isBrowser()
 
   const init = async () => {
-    if (process.server)
-      return
-    todos.value = await storage.get<TodoInfo[]>('todos', [])
+    if (browser)
+      todos.value = await storage.get<TodoInfo[]>('todos', [])
   }
 
   const upsetTodo = async (todo: Omit<TodoInfo, 'id' | 'group'> & { id?: string }) => {
