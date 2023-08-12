@@ -14,7 +14,7 @@ async function signInWithOAuth(provider: Provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${appConfig.WEBSITE_URL}/confirm`,
+      redirectTo: `${appConfig.WEBSITE_URL}/auth/confirm`,
     },
   })
   if (error)
