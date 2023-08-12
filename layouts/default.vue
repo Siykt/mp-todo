@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const isLoginPage = computed(() => route.path === '/login')
+const isLoginPage = computed(() => ['/login', '/sign-in'].includes(route.path))
 </script>
 
 <template>
