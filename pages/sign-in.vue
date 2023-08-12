@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Provider } from '@supabase/gotrue-js'
+import { useToast } from '~/lib/hooks/useToast'
 
 const supabase = useSupabaseClient()
 
 const email = ref('')
 const password = ref('')
-const showMsg = ref(false)
-const msg = ref('')
+const toast = useToast()
 
 const appConfig = useAppConfig()
 
@@ -21,24 +21,18 @@ async function signInWithOAuth(provider: Provider) {
     console.error(error)
 }
 async function signInWithPassword() {
-  if (!email.value) {
-    msg.value = '请输入邮箱地址'
-    showMsg.value = true
-    return
-  }
-  if (!password.value) {
-    msg.value = '请输入密码'
-    showMsg.value = true
-    return
-  }
+  if (!email.value)
+    return toast.info('请输入邮箱地址！')
+
+  if (!password.value)
+    return toast.info('请输入密码！')
+
   const { error } = await supabase.auth.signInWithPassword({
     email: email.value,
     password: password.value,
   })
-  if (error) {
-    msg.value = { 'Invalid login credentials': '无效的邮箱地址或密码错误' }[error.message] || error.message
-    showMsg.value = true
-  }
+  if (error)
+    toast.info({ 'Invalid login credentials': '无效的邮箱地址或密码错误！' }[error.message] ?? error.message)
 }
 </script>
 
