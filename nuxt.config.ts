@@ -31,8 +31,16 @@ export default defineNuxtConfig({
   },
   appConfig: {
     username: 'AntPro',
+    WEBSITE_URL: 'https://todo.antpro.me',
   },
-  modules: ['@unocss/nuxt', '@nuxtjs/eslint-module'],
+  supabase: {
+    redirectOptions: {
+      login: '/sign-in',
+      callback: '/auth/confirm',
+      exclude: [],
+    },
+  },
+  modules: ['@unocss/nuxt', '@nuxtjs/eslint-module', '@nuxtjs/supabase'],
   eslint: {
     lintOnStart: false,
   },

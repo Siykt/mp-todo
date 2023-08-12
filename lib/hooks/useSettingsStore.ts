@@ -1,19 +1,19 @@
 import storage from '../storage'
+import { isBrowser } from '~/lib/isBrowser'
 import type { Settings } from '~/models/Settings/Core'
 
 export function useSettingsStore() {
   const settings = useState<Settings>('settings', () => ({ SMTPTLS: false }))
+  const browser = isBrowser()
 
   const getLocalSettings = async () => {
-    if (process.server)
-      return
-    settings.value = await storage.get<Settings>('settings', { SMTPTLS: false })
+    if (browser)
+      settings.value = await storage.get<Settings>('settings', { SMTPTLS: false })
   }
 
   const saveLocalSettings = async () => {
-    if (process.server)
-      return
-    await storage.set('settings', settings.value)
+    if (browser)
+      await storage.set('settings', settings.value)
   }
 
   onMounted(getLocalSettings)
