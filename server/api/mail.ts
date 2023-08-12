@@ -109,10 +109,10 @@ export default defineEventHandler(async (event) => {
     ...body,
     config: {
       SMTPHost: SMTP.Host,
-      SMTPPort: SMTP.Port,
+      SMTPPort: +SMTP.Port,
       SMTPUser: SMTP.User,
       SMTPPass: SMTP.Pass,
-      SMTPTLS: SMTP.TLS,
+      SMTPTLS: SMTP.TLS === 'true',
       SMTPFrom: SMTP.From,
       ...body.config,
     },
