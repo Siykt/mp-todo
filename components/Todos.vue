@@ -94,10 +94,12 @@ async function addScheduled(todo: TodoInfo) {
       ...todo.scheduled.config,
       authorization: settings.value.authorization,
       body: {
-        id: todo.id,
         to: settings.value.email,
-        title: todo.title,
-        message: todo.scheduled.config.message,
+        data: {
+          id: todo.id,
+          title: todo.title,
+          message: todo.scheduled.config.message,
+        },
       },
     },
   })
