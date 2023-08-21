@@ -44,7 +44,7 @@ async function signInWithPassword() {
       </a>
       <span>TODO</span>
     </h1>
-    <div class="mx-auto min-h-1px w-full flex flex-1 flex-col gap-2 p4 text-#333 md:w-460px md:px8">
+    <div class="mx-auto min-h-1px w-full flex flex-1 flex-col gap-2 of-x-auto p4 text-#333 md:w-460px md:px8">
       <h2 class="flex flex-col text-base">
         登录到您的账户
         <span class="text-12px">登录后即可使用、自定义您的待办事项</span>
